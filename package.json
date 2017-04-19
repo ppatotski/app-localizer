@@ -3,8 +3,13 @@
   "version": "1.0.2",
   "description": "Application Localizer",
   "main": "index.js",
+  "devDependencies": {
+	  "mocha": "latest",
+	  "chai": "latest",
+	  "eslint": "latest"
+  },
   "scripts": {
-    "test": "test"
+    "deploy": "npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
