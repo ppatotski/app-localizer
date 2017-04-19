@@ -1,0 +1,26 @@
+{
+  "name": "app-localizer",
+  "version": "1.0.0",
+  "description": "Application Localizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ppatotski/app-localizer.git"
+  },
+  "keywords": [
+    "localization",
+    "pseudo",
+    "gulp",
+    "internationalization",
+    "i18n"
+  ],
+  "author": "Petr Patotski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ppatotski/app-localizer/issues"
+  },
+  "homepage": "https://github.com/ppatotski/app-localizer#readme"
+}
