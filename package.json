@@ -1,12 +1,12 @@
 {
   "name": "app-localizer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
-	  "mocha": "latest",
-	  "chai": "latest",
-	  "eslint": "latest"
+    "mocha": "latest",
+    "chai": "latest",
+    "eslint": "latest"
   },
   "scripts": {
     "deploy": "npm version patch && npm publish"
