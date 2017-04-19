@@ -3,7 +3,7 @@ const numbers = require( './numbers.json' );
 
 exports.toPseudoText = function toPseudoText(text, options) {
 	if(options.expander) {
-		let charCount = Math.round(text.length * settings.pseudoLocale.expander);
+		let charCount = Math.round(text.length * options.expander);
 		let wordIndex = 0;
 		let expansion = charCount;
 		while (expansion > 0) {
