@@ -1,6 +1,6 @@
 {
   "name": "app-localizer",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
@@ -25,8 +25,8 @@
     "gulp",
     "internationalization",
     "i18n",
-	"polymer",
-	"angular"
+    "polymer",
+    "angular"
   ],
   "author": "Petr Patotski",
   "license": "MIT",
