@@ -1,6 +1,10 @@
 # Application Localizer
 
-Application Localizer to help with localizing applications.
+Application Localizer that helps with localizing applications.
+
+>used by vscode-app-localizer vscode extension
+>
+>[![VSCode Extension Release](http://vsmarketplacebadge.apphb.com/version/gsppvo.vscode-app-localizer.svg)](https://marketplace.visualstudio.com/items?itemName=gsppvo.vscode-app-localizer)
 
 ## Features
 
@@ -20,7 +24,7 @@ npm install --save-dev app-localizer
 
 ## Usage
 
-Generate pseudo locale file (`gulp`)
+Generate pseudo locale json file from source (`gulp`)
 
 ```javascript
 var localizer = require('app-localizer');

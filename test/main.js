@@ -45,13 +45,21 @@ describe('app-localizer', function() {
 	});
 
 	describe('pseudoLocalize', function() {
-		it('pseudo localize json', function(done) {
+		it('pseudo localize polymer', function(done) {
 			const result = `{
 	"pseudo": {
-		"label1": "sssooommmeee ttteeexxxttt"
+		"label1": "sssooommmeee {token1} ttteeexxxttt {{token2}}"
 	}
 }`;
-			expect( localizer.pseudoLocalizeContent({ wordexpander: 2 }, '{ "us-en": { "label1": "some text" } }')).to.be.equal(result);
+			expect( localizer.pseudoLocalizeContent({ wordexpander: 2 }, '{ "us-en": { "label1": "some {token1} text {{token2}}" } }')).to.be.equal(result);
+			done();
+		});
+
+		it('pseudo localize angular.flat', function(done) {
+			const result = `{
+	"label1": "sssooommmeee {token1} ttteeexxxttt {{token2}}"
+}`;
+			expect( localizer.pseudoLocalizeContent({ wordexpander: 2, format: 'angular.flat' }, '{ "label1": "some {token1} text {{token2}}" }')).to.be.equal(result);
 			done();
 		});
 	});

@@ -24,7 +24,9 @@
     "pseudo",
     "gulp",
     "internationalization",
-    "i18n"
+    "i18n",
+	"polymer",
+	"angular"
   ],
   "author": "Petr Patotski",
   "license": "MIT",

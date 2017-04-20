@@ -65,7 +65,7 @@ exports.toPseudoText = function toPseudoText(text, options) {
 
 exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
 	let locale = JSON.parse( text );
-	const localename = options.format === 'anguler.flat' ? '' : Object.keys(locale)[ 0 ];
+	const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
 	const result = {};
 
 	if (localename) {
