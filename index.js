@@ -1,3 +1,4 @@
+const through = require( 'through2' );
 const mapping = require( './mapping.json' );
 const numbers = require( './numbers.json' );
 
@@ -14,7 +15,7 @@ exports.toPseudoText = function toPseudoText(text, options) {
 				wordIndex += 1;
 			}
 		}
-		if(options.accents) {
+		if(options.accents || options.wordexpander) {
 			let ignoreMode = false;
 			let preIgnoreMode = false;
 			let pseudo = '';
@@ -27,10 +28,15 @@ exports.toPseudoText = function toPseudoText(text, options) {
 					}
 					preIgnoreMode = true;
 				}
-				if(preIgnoreMode || ignoreMode) {
+				if(preIgnoreMode || ignoreMode || !options.accents) {
 					pseudo += letter;
 				} else {
 					pseudo += mapping[letter];
+				}
+				if(!(preIgnoreMode || ignoreMode) && options.wordexpander && letter !== ' ') {
+					for (let i = 0; i < options.wordexpander; i += 1) {
+						pseudo += pseudo[pseudo.length - 1];
+					}
 				}
 				if(letter === '}') {
 					if(!preIgnoreMode) {
@@ -41,18 +47,42 @@ exports.toPseudoText = function toPseudoText(text, options) {
 			});
 			text = pseudo;
 		}
-		if(options.rightToLeft) {
-			const RLO = '\u202e';
-			const PDF = '\u202c';
-			const RLM = '\u200F';
-			text = RLM + RLO + text + PDF + RLM;
-		}
 		if(options.exclamations) {
 			text = `!!! ${text} !!!`;
 		}
 		if(options.brackets) {
 			text = options.exclamations ? `[${text}]` : `[ ${text} ]`;
 		}
+		if(options.rightToLeft) {
+			const RLO = '\u202e';
+			const PDF = '\u202c';
+			const RLM = '\u200F';
+			text = RLM + RLO + text + PDF + RLM;
+		}
 	}
 	return text;
 }
+
+exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
+	let locale = JSON.parse( text );
+	const localename = options.format === 'anguler.flat' ? '' : Object.keys(locale)[ 0 ];
+	const result = {};
+
+	if (localename) {
+		locale = locale[localename];
+	}
+
+	Object.keys(locale).forEach((key) => {
+		result[key] = exports.toPseudoText(locale[key], options);
+	} );
+
+	return JSON.stringify( localename ? { pseudo: result } : result, null, '\t' );
+}
+
+exports.pseudoLocalize = function pseudoLocalize(options) {
+	return through.obj( function process( file, enc, cb ) {
+		file.contents = new Buffer(exports.pseudoLocalizeContent(options, file.contents));
+		setImmediate(cb, null, file);
+	} );
+};
+

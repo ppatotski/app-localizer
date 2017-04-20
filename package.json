@@ -8,8 +8,12 @@
     "chai": "latest",
     "eslint": "latest"
   },
+  "dependencies": {
+    "through2": "latest"
+  },
   "scripts": {
-    "deploy": "npm version patch && npm publish"
+    "test": "mocha",
+    "deploy": "mocha && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
