@@ -3,56 +3,74 @@ const mapping = require( './mapping.json' );
 const numbers = require( './numbers.json' );
 
 exports.toPseudoText = function toPseudoText(text, options) {
-	if(options) {
+	if(options && text) {
+		let words = text.split(' ');
+		const isToken = function isToken(word) {
+			return word[0] === '{' && word[word.length - 1] === '}';
+		};
+
 		if(options.expander) {
-			let charCount = Math.round(text.length * options.expander);
-			let wordIndex = 0;
-			let expansion = charCount;
-			while (expansion > 0) {
-				const word = numbers.words[wordIndex % numbers.words.length];
-				text += ` ${word}`;
-				expansion -= word.length + 1;
-				wordIndex += 1;
+			const extraWordCount = Math.round(words.length * options.expander);
+			let extraWordPosition = 0;
+			for (let i = 0; i < extraWordCount; i += 1) {
+				const expandedPosition = Math.round((words.length + extraWordCount - 1) / (words.length - 1) * extraWordPosition) + 1;
+				const word = numbers.words[i % numbers.words.length];
+				words.splice(expandedPosition, 0, word);
+				extraWordPosition += (words.length - 1) / extraWordCount;
 			}
 		}
-		if(options.accents || options.wordexpander) {
-			let ignoreMode = false;
-			let preIgnoreMode = false;
-			let pseudo = '';
 
-			[...text].forEach(letter => {
-				if(letter === '{') {
-					if(preIgnoreMode) {
-						ignoreMode = true;
-						pseudo = `${pseudo.substring(0, pseudo.length - 1)}{`;
+		if(options.wordexpander) {
+			const expandedWords = [];
+			words.forEach((word) => {
+				if(!isToken(word)) {
+					const extraChartCount = Math.round(word.length * options.wordexpander);
+					let extraChartPosition = 0;
+					let expandedWord = word;
+					for (let i = 0; i < extraChartCount; i += 1) {
+						const position = Math.round(extraChartPosition);
+						const expandedPosition = Math.round((word.length + extraChartCount - 1) / (word.length - 1) * extraChartPosition) + 1;
+						const char = word[position];
+						expandedWord = `${expandedWord.substring(0, expandedPosition)}${char}${expandedWord.substring(expandedPosition)}`;
+						extraChartPosition += (word.length - 1) / extraChartCount;
 					}
-					preIgnoreMode = true;
+					word = expandedWord;
 				}
-				if(preIgnoreMode || ignoreMode || !options.accents) {
-					pseudo += letter;
-				} else {
-					pseudo += mapping[letter];
-				}
-				if(!(preIgnoreMode || ignoreMode) && options.wordexpander && letter !== ' ') {
-					for (let i = 0; i < options.wordexpander; i += 1) {
-						pseudo += pseudo[pseudo.length - 1];
-					}
-				}
-				if(letter === '}') {
-					if(!preIgnoreMode) {
-						ignoreMode = false;
-					}
-					preIgnoreMode = false;
-				}
+
+				expandedWords.push(word);
 			});
-			text = pseudo;
+			words = expandedWords;
 		}
+
+		if(options.accents) {
+			const accentedWords = [];
+			words.forEach((word) => {
+				if(!isToken(word)) {
+					word = [...word].map(char => mapping[char]).join('');
+				}
+
+				accentedWords.push(word);
+			});
+			words = accentedWords;
+		}
+
 		if(options.exclamations) {
-			text = `!!! ${text} !!!`;
+			words.splice(0, 0, '!!!');
+			words.push('!!!');
 		}
+
 		if(options.brackets) {
-			text = options.exclamations ? `[${text}]` : `[ ${text} ]`;
+			if(options.exclamations) {
+				words[0] = '[!!!';
+				words[words.length - 1] = '!!!]';
+			} else {
+				words.splice(0, 0, '[');
+				words.push(']');
+			}
 		}
+
+		text = words.join(' ');
+
 		if(options.rightToLeft) {
 			const RLO = '\u202e';
 			const PDF = '\u202c';

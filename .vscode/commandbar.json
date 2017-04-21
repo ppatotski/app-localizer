@@ -1,0 +1,10 @@
+{
+	"commands": [
+		{
+			"text": "Test Localizer",
+			"color": "yellow",
+			"command": "npm run test",
+			"priority": 0
+		}
+	]
+}

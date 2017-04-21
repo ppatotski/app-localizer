@@ -36,12 +36,12 @@ gulp.task('locales', function generatePseudoLocale() {
   gulp.src('app/locales/en-us.json')
   	.pipe(rename('pseudo.json'))
 	.pipe(localizer.pseudoLocalize({
-		expander: 0.6,
+		expander: 0.2,
 		accents: true,
 		rightToLeft: false,
 		exclamations: true,
 		brackets: true,
-		wordexpander: 1 }))
+		wordexpander: 0.5 }))
 	.pipe(gulp.dest('dist/locales/'));
 });
 ```
@@ -52,12 +52,12 @@ Generate pseudo locale text
 const localizer = require('app-localizer');
 
 const pseudoText = localizer.toPseudoText(text, {
-	expander: 0.3,
+	expander: 0.2,
 	exclamations: true,
 	brackets: true,
 	accents: true,
 	rightToLeft: false,
-	wordexpander: 1
+	wordexpander: 0.5
 });
 ```
 
