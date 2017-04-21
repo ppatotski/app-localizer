@@ -3,8 +3,16 @@
 		{
 			"text": "Test Localizer",
 			"color": "yellow",
-			"command": "npm run test",
-			"priority": 0
+			"commandType": "script",
+			"command": "test",
+			"priority": 1
+		},
+		{
+			"text": "Deploy Localizer",
+			"color": "lightgreen",
+			"commandType": "script",
+			"command": "deploy",
+			"priority": 2
 		}
 	]
 }
