@@ -1,6 +1,6 @@
 {
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
-		"gsppvo.vscode-app-localizer"
+		"gsppvo.vscode-commandbar"
 	]
 }
