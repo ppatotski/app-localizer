@@ -1,4 +1,4 @@
-const through = require( 'through2' );
+const Transform = require( 'stream' ).Transform;
 const mapping = require( './mapping.json' );
 const numbers = require( './numbers.json' );
 
@@ -79,7 +79,7 @@ exports.toPseudoText = function toPseudoText(text, options) {
 		}
 	}
 	return text;
-}
+};
 
 exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
 	let locale = JSON.parse( text );
@@ -95,12 +95,17 @@ exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
 	} );
 
 	return JSON.stringify( localename ? { pseudo: result } : result, null, '\t' );
-}
-
-exports.pseudoLocalize = function pseudoLocalize(options) {
-	return through.obj( function process( file, enc, cb ) {
-		file.contents = new Buffer(exports.pseudoLocalizeContent(options, file.contents));
-		setImmediate(cb, null, file);
-	} );
 };
 
+exports.pseudoLocalize = function pseudoLocalize(options) {
+	return new Transform({
+		objectMode: true,
+		transform: function(file, enc, callback) {
+			if (file.isNull()) {
+				return callback(null, file);
+			}
+			file.contents = new Buffer(exports.pseudoLocalizeContent(options, file.contents));
+			return callback(null, file);
+		}
+	});
+};

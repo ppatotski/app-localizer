@@ -4,12 +4,10 @@
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
+    "gulp": "latest",
     "mocha": "latest",
     "chai": "latest",
     "eslint": "latest"
-  },
-  "dependencies": {
-    "through2": "latest"
   },
   "scripts": {
     "test": "mocha",

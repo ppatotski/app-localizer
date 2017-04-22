@@ -1,4 +1,5 @@
 const localizer = require('../');
+const gulp = require('gulp');
 const expect = require( 'chai' ).expect;
 
 describe('app-localizer', function() {
