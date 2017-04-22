@@ -1,6 +1,6 @@
 {
   "name": "app-localizer",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
