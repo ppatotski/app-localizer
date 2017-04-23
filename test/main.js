@@ -74,7 +74,7 @@ describe('app-localizer', function() {
 	describe('pseudoLocalize', function() {
 		it('pseudo localize polymer', function(done) {
 			const result = '{\n	"pseudo": {\n		"label1": "sssooommmmee {token1} ttteeexxxxtt {{token2}}"\n	}\n}';
-			assert.equal(localizer.pseudoLocalizeContent({ wordexpander: 2 }, '{ "us-en": { "label1": "some {token1} text {{token2}}" } }'), result);
+			assert.equal(localizer.pseudoLocalizeContent({ wordexpander: 2 }, '{ "en-us": { "label1": "some {token1} text {{token2}}" } }'), result);
 			done();
 		});
 
@@ -87,13 +87,45 @@ describe('app-localizer', function() {
 		it('pseudo localize gulp', function(done) {
 			const result = '{\n	"pseudo": {\n		"label1": "sssooommmmee {token1} ttteeexxxxtt {{token2}}"\n	}\n}';
 			const localeFile = new File({
-				contents: new Buffer('{ "us-en": { "label1": "some {token1} text {{token2}}" } }')
+				contents: new Buffer('{ "en-us": { "label1": "some {token1} text {{token2}}" } }')
 			});
 			const localizerPlugin = localizer.pseudoLocalize({ wordexpander: 2 });
 			localizerPlugin.write(localeFile);
 			localizerPlugin.once('data', function(file) {
 				assert(file.isBuffer());
-				assert.equal(file.contents, result);;
+				assert.equal(file.contents, result);
+				done();
+			});
+		});
+	});
+
+	describe('validateLocales', function() {
+		it('validate path', function(done) {
+			const result = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
+			assert.deepEqual(localizer.validateLocalesContent(JSON.parse('{ "en-us": { "label1": "some {token1} text {{token2}}" }, "de-de": { "label2": "some {token1} text {{token2}}" } }')), result);
+			done();
+		});
+
+		it('validate path gulp (single file)', function(done) {
+			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
+			localizer.validateLocales('locales/test1/en-us.json', { multiFile: false }, (result) => {
+				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
+
+		it('validate path gulp (polymer multi-file)', function(done) {
+			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
+			localizer.validateLocales('locales/test2/', { multiFile: true }, (result) => {
+				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
+
+		it('validate path gulp (angular.flat multi-file)', function(done) {
+			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
+			localizer.validateLocales('locales/test3/', { multiFile: true, fileStructure: 'angular.flat' }, (result) => {
+				assert.deepEqual(result, expectedResult);
 				done();
 			});
 		});

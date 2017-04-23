@@ -1,4 +1,5 @@
 const Transform = require( 'stream' ).Transform;
+const fs = require( 'fs' );
 const mapping = require( './mapping.json' );
 const numbers = require( './numbers.json' );
 
@@ -108,4 +109,66 @@ exports.pseudoLocalize = function pseudoLocalize(options) {
 			return callback(null, file);
 		}
 	});
+};
+
+exports.validateLocalesContent = function validateLocalesContent(locales, baseLocales) {
+	let result = undefined;
+	if(!baseLocales) {
+		baseLocales = locales;
+	}
+	Object.keys(baseLocales).forEach((localeName) => {
+		Object.keys(baseLocales[localeName]).forEach((label) => {
+			Object.keys(locales).filter(key => key !== localeName).forEach((otherLocaleName) => {
+				if(!Object.keys(locales[otherLocaleName]).some(otherLabel => otherLabel === label)) {
+					if(!result) {
+						result = {};
+					}
+					if(!result[localeName]) {
+						result[localeName] = {};
+					}
+					if(!result[localeName][label]) {
+						result[localeName][label] = [];
+					}
+					result[localeName][label].push(otherLocaleName);
+				}
+			});
+		});
+	});
+	return result;
+};
+
+exports.validateLocales = function validateLocales(path, options, callback) {
+	if(options.multiFile) {
+		fs.readdir(path, (err, files) => {
+			if(err) {
+				throw err;
+			}
+			const noLocaleKey = options.fileStructure === 'angular.flat';
+			const locales = {};
+			let fileCount = files.length;
+			files.forEach(file => {
+				fs.readFile(`${path}\\${file}`, (err, buffer) => {
+					if(err) {
+						throw err;
+					}
+					fileCount -= 1;
+					const locale = JSON.parse(buffer);
+					const localeName = noLocaleKey? file.substring(0, file.lastIndexOf('.')) : Object.keys(locale)[0];
+					locales[localeName] = noLocaleKey? locale : locale[localeName];
+					if(!fileCount) {
+						const result = exports.validateLocalesContent(locales);
+						callback(result);
+					}
+				});
+			});
+		});
+	} else {
+		fs.readFile(path, (err, buffer) => {
+			if(err) {
+				throw err;
+			}
+			const result = exports.validateLocalesContent(JSON.parse(buffer));
+			callback(result);
+		});
+	}
 };
