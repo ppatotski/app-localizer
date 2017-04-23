@@ -1,13 +1,13 @@
 {
   "name": "app-localizer",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
     "gulp": "latest",
     "mocha": "latest",
     "eslint": "latest",
-	"vinyl": "latest"
+    "vinyl": "latest"
   },
   "scripts": {
     "test": "mocha",
@@ -25,7 +25,7 @@
     "i18n",
     "polymer",
     "angular",
-	"gulpplugin"
+    "gulpplugin"
   ],
   "author": "Petr Patotski",
   "license": "MIT",
