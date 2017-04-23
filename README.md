@@ -36,6 +36,7 @@ npm install --save-dev app-localizer
 Validate locale file(s) (e.g. `gulp`)
 
 ```javascript
+const gulp = require('gulp');
 const localizer = require('app-localizer');
 
 gulp.task('validateLocales', function validateLocales(callback) {
@@ -50,6 +51,7 @@ gulp.task('validateLocales', function validateLocales(callback) {
 Generate pseudo locale json file from source (`gulp`)
 
 ```javascript
+const gulp = require('gulp');
 const localizer = require('app-localizer');
 const rename = require('gulp-rename');
 
