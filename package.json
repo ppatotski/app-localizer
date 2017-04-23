@@ -6,8 +6,8 @@
   "devDependencies": {
     "gulp": "latest",
     "mocha": "latest",
-    "chai": "latest",
-    "eslint": "latest"
+    "eslint": "latest",
+	"vinyl": "latest"
   },
   "scripts": {
     "test": "mocha",
@@ -24,7 +24,8 @@
     "internationalization",
     "i18n",
     "polymer",
-    "angular"
+    "angular",
+	"gulpplugin"
   ],
   "author": "Petr Patotski",
   "license": "MIT",

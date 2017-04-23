@@ -11,6 +11,15 @@
         },
         "sourceType": "module"
     },
+	"globals"   : {
+		/* MOCHA */
+		"describe"   : false,
+		"it"         : false,
+		"before"     : false,
+		"beforeEach" : false,
+		"after"      : false,
+		"afterEach"  : false
+	},
     "rules": {
 		"indent": [ "warn", "tab", { "SwitchCase": 1, "MemberExpression": 1 } ],
         "no-const-assign": "warn",

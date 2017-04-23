@@ -33,20 +33,20 @@ const localizer = require('app-localizer');
 const rename = require('gulp-rename');
 
 gulp.task('locales', function generatePseudoLocale() {
-  gulp.src('app/locales/en-us.json')
-  	.pipe(rename('pseudo.json'))
-	.pipe(localizer.pseudoLocalize({
-		expander: 0.2,
-		accents: true,
-		rightToLeft: false,
-		exclamations: true,
-		brackets: true,
-		wordexpander: 0.5 }))
-	.pipe(gulp.dest('dist/locales/'));
+	gulp.src('app/locales/en-us.json')
+		.pipe(rename('pseudo.json'))
+		.pipe(localizer.pseudoLocalize({
+			expander: 0.2,
+			accents: true,
+			rightToLeft: false,
+			exclamations: true,
+			brackets: true,
+			wordexpander: 0.5 }))
+		.pipe(gulp.dest('dist/locales/'));
 });
 ```
 
-Generate pseudo locale text
+Generate pseudo locale text ([try it](https://runkit.com/58fc19cf15bef7001293bfb4/58fc19cf15bef7001293bfb5))
 
 ```javascript
 const localizer = require('app-localizer');
