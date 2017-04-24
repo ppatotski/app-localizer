@@ -165,17 +165,17 @@ exports.pseudoLocalize = pseudoLocalize;
  * Validates locales for missing labels.
  *
  * @param {Object} locales Object with all locales.
- * @param {Object} baseLocales Locale that is used as a base for validating against to
+ * @param {Object} baseLocale Locale that is used as a base for validating against to
  * (do not specify in case of validating all against all).
  * @returns {Object} Validation result
  */
-function validateLocalesContent(locales, baseLocales) {
+function validateLocalesContent(locales, baseLocale) {
 	let result = undefined;
-	if(!baseLocales) {
-		baseLocales = locales;
+	if(!baseLocale) {
+		baseLocale = locales;
 	}
-	Object.keys(baseLocales).forEach((localeName) => {
-		Object.keys(baseLocales[localeName]).forEach((label) => {
+	Object.keys(baseLocale).forEach((localeName) => {
+		Object.keys(baseLocale[localeName]).forEach((label) => {
 			Object.keys(locales).filter(key => key !== localeName).forEach((otherLocaleName) => {
 				if(!Object.keys(locales[otherLocaleName]).some(otherLabel => otherLabel === label)) {
 					if(!result) {
@@ -198,13 +198,15 @@ function validateLocalesContent(locales, baseLocales) {
 exports.validateLocalesContent = validateLocalesContent;
 
 /**
- * Validates locales for missing labels (gulp).
+ * Validates locales for missing labels.
  *
  * @param {string} path Path to locale files.
  * @param {ValidateOptions} options Validate options.
+ * @param {Object} baseLocale Locale that is used as a base for validating against to
+ * (do not specify in case of validating all against all).
  * @param {function} callback Function callback with result of errors as a first parameter (result is undefined in case of success).
  */
-function validateLocales(path, options, callback) {
+function validateLocales(path, options, baseLocale, callback) {
 	if(options.multiFile) {
 		fs.readdir(path, (err, files) => {
 			if(err) {
@@ -223,7 +225,7 @@ function validateLocales(path, options, callback) {
 					const localeName = noLocaleKey? file.substring(0, file.lastIndexOf('.')) : Object.keys(locale)[0];
 					locales[localeName] = noLocaleKey? locale : locale[localeName];
 					if(!fileCount) {
-						const result = exports.validateLocalesContent(locales);
+						const result = validateLocalesContent(locales, baseLocale);
 						callback(result);
 					}
 				});
@@ -234,7 +236,7 @@ function validateLocales(path, options, callback) {
 			if(err) {
 				throw err;
 			}
-			const result = exports.validateLocalesContent(JSON.parse(buffer));
+			const result = validateLocalesContent(JSON.parse(buffer));
 			callback(result);
 		});
 	}
