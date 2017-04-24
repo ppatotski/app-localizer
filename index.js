@@ -243,3 +243,33 @@ function validateLocales(path, options, baseLocale, callback) {
 };
 
 exports.validateLocales = validateLocales;
+
+/**
+ * Validates locales for missing labels in multiple folders.
+ *
+ * @param {string[]} paths Paths to locale files.
+ * @param {ValidateOptions} options Validate options.
+ * @param {Object} baseLocale Locale that is used as a base for validating against to
+ * (do not specify in case of validating all against all).
+ * @param {function} callback Function callback with result of errors as a first parameter (result is undefined in case of success).
+ */
+function validateMultipleLocales(paths, options, baseLocale, callback) {
+	let overallResult = undefined;
+	let pathCount = 0;
+	paths.forEach((path) => {
+		validateLocales(path, options, baseLocale, (result) => {
+			pathCount += 1;
+			if(result) {
+				if(!overallResult) {
+					overallResult = {};
+				}
+				overallResult[path] = result;
+			}
+			if(pathCount === paths.length) {
+				callback(overallResult);
+			}
+		});
+	});
+};
+
+exports.validateMultipleLocales = validateMultipleLocales;

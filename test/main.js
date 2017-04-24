@@ -137,5 +137,13 @@ describe('app-localizer', function() {
 				done();
 			});
 		});
+
+		it('validate path multi path (angular.flat multi-file)', function(done) {
+			const expectedResult = { "locales/test3/": { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } }, "locales/test4/": { "en-us": { "label3": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } } };
+			localizer.validateMultipleLocales([ 'locales/test3/', 'locales/test4/' ], { multiFile: true, fileStructure: 'angular.flat' }, undefined, (result) => {
+				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
 	});
 });
