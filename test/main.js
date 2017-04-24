@@ -106,25 +106,33 @@ describe('app-localizer', function() {
 			done();
 		});
 
-		it('validate path gulp (single file)', function(done) {
+		it('validate path (single file)', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
-			localizer.validateLocales('locales/test1/en-us.json', { multiFile: false }, (result) => {
+			localizer.validateLocales('locales/test1/en-us.json', { multiFile: false }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
 				done();
 			});
 		});
 
-		it('validate path gulp (polymer multi-file)', function(done) {
+		it('validate path (polymer multi-file)', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
-			localizer.validateLocales('locales/test2/', { multiFile: true }, (result) => {
+			localizer.validateLocales('locales/test2/', { multiFile: true }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
 				done();
 			});
 		});
 
-		it('validate path gulp (angular.flat multi-file)', function(done) {
+		it('validate path with base (polymer multi-file)', function(done) {
+			const expectedResult = { "en-us": { "label1": [ "de-de" ] } };
+			localizer.validateLocales('locales/test2/', { multiFile: true }, { "en-us": { "label1": "some text" } }, (result) => {
+				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
+
+		it('validate path (angular.flat multi-file)', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
-			localizer.validateLocales('locales/test3/', { multiFile: true, fileStructure: 'angular.flat' }, (result) => {
+			localizer.validateLocales('locales/test3/', { multiFile: true, fileStructure: 'angular.flat' }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
 				done();
 			});
