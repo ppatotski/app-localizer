@@ -23,7 +23,7 @@ const numbers = require( './numbers.json' );
  * @property {string} format Structure of locale file content (polymer, angular.flat).
  *
  * @typedef ValidateOptions
- * @property {boolean} boolean Locale is localed in separate file.
+ * @property {boolean} multiFile Locale is localed in separate file.
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
 */
 
