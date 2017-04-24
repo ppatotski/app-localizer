@@ -4,9 +4,9 @@ Application Localizer that helps with localizing applications.
 
 [![NPM version](https://img.shields.io/npm/v/app-localizer.svg)](https://www.npmjs.com/package/app-localizer)
 
->used by vscode-app-localizer vscode extension
+> used by vscode-app-localizer vscode extension
 >
->[![VSCode Extension Release](http://vsmarketplacebadge.apphb.com/version/gsppvo.vscode-app-localizer.svg)](https://marketplace.visualstudio.com/items?itemName=gsppvo.vscode-app-localizer)
+> [![VSCode Extension Release](http://vsmarketplacebadge.apphb.com/version/gsppvo.vscode-app-localizer.svg)](https://marketplace.visualstudio.com/items?itemName=gsppvo.vscode-app-localizer)
 
 ## Features
 
@@ -40,7 +40,8 @@ const gulp = require('gulp');
 const localizer = require('app-localizer');
 
 gulp.task('validateLocales', function validateLocales(callback) {
-	localizer.validateLocales('locales/test2/', { multiFile: true }, (result) => {
+	localizer.validateLocales('locales/test2/', { multiFile: true, fileStructure: 'polymer' }, (result) => {
+		// result contains missing labels if any
 		callback(result);
 	});
 });

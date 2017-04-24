@@ -3,7 +3,38 @@ const fs = require( 'fs' );
 const mapping = require( './mapping.json' );
 const numbers = require( './numbers.json' );
 
-exports.toPseudoText = function toPseudoText(text, options) {
+/**
+ * @typedef GeneratorOptions
+ * @type {Object}
+ * @property {number} expander Sentance expanding factor (0.3 = 30%).
+ * @property {number} wordexpander Word expanding factor (0.5 = 50%).
+ * @property {boolean} accents Convert letter to its accent version.
+ * @property {boolean} exclamations Enclose in exclamations.
+ * @property {boolean} brackets Enclose in brackets.
+ * @property {boolean} rightToLeft Left-to-Right.
+ *
+ * @typedef PseudoLocalizerOptions
+ * @property {number} expander Sentance expanding factor (0.3 = 30%).
+ * @property {number} wordexpander Word expanding factor (0.5 = 50%).
+ * @property {boolean} accents Convert letter to its accent version.
+ * @property {boolean} exclamations Enclose in exclamations.
+ * @property {boolean} brackets Enclose in brackets.
+ * @property {boolean} rightToLeft Left-to-Right.
+ * @property {string} format Structure of locale file content (polymer, angular.flat).
+ *
+ * @typedef ValidateOptions
+ * @property {boolean} boolean Locale is localed in separate file.
+ * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
+*/
+
+/**
+ * Generates pseudo text.
+ *
+ * @param {string} text Input text.
+ * @param {GeneratorOptions} options Generator options:
+ * @returns {string} Pseudo generated text
+ */
+function toPseudoText(text, options) {
 	if(options && text) {
 		let words = text.split(' ');
 		const isToken = function isToken(word) {
@@ -82,8 +113,17 @@ exports.toPseudoText = function toPseudoText(text, options) {
 	return text;
 };
 
-exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
-	let locale = JSON.parse( text );
+exports.toPseudoText = toPseudoText;
+
+/**
+ * Generates pseudo locale.
+ *
+ * @param {PseudoLocalizerOptions} options Generator options.
+ * @param {string} text Input json file content.
+ * @returns {string} Pseudo generated json content
+ */
+function pseudoLocalizeContent(options, text) {
+	let locale = JSON.parse(text);
 	const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
 	const result = {};
 
@@ -92,26 +132,44 @@ exports.pseudoLocalizeContent = function pseudoLocalizeContent(options, text) {
 	}
 
 	Object.keys(locale).forEach((key) => {
-		result[key] = exports.toPseudoText(locale[key], options);
+		result[key] = toPseudoText(locale[key], options);
 	} );
 
 	return JSON.stringify( localename ? { pseudo: result } : result, null, '\t' );
 };
 
-exports.pseudoLocalize = function pseudoLocalize(options) {
+exports.pseudoLocalizeContent = pseudoLocalizeContent;
+
+/**
+ * Generates pseudo locale (gulp).
+ *
+ * @param {PseudoLocalizerOptions} options Generator options.
+ * @returns {Transform}
+ */
+function pseudoLocalize(options) {
 	return new Transform({
 		objectMode: true,
 		transform: function(file, enc, callback) {
 			if (file.isNull()) {
 				return callback(null, file);
 			}
-			file.contents = new Buffer(exports.pseudoLocalizeContent(options, file.contents));
+			file.contents = new Buffer(pseudoLocalizeContent(options, file.contents));
 			return callback(null, file);
 		}
 	});
 };
 
-exports.validateLocalesContent = function validateLocalesContent(locales, baseLocales) {
+exports.pseudoLocalize = pseudoLocalize;
+
+/**
+ * Validates locales for missing labels.
+ *
+ * @param {Object} locales Object with all locales.
+ * @param {Object} baseLocales Locale that is used as a base for validating against to
+ * (do not specify in case of validating all against all).
+ * @returns {Object} Validation result
+ */
+function validateLocalesContent(locales, baseLocales) {
 	let result = undefined;
 	if(!baseLocales) {
 		baseLocales = locales;
@@ -137,7 +195,16 @@ exports.validateLocalesContent = function validateLocalesContent(locales, baseLo
 	return result;
 };
 
-exports.validateLocales = function validateLocales(path, options, callback) {
+exports.validateLocalesContent = validateLocalesContent;
+
+/**
+ * Validates locales for missing labels (gulp).
+ *
+ * @param {string} path Path to locale files.
+ * @param {ValidateOptions} options Validate options.
+ * @param {function} callback Function callback with result of errors as a first parameter (result is undefined in case of success).
+ */
+function validateLocales(path, options, callback) {
 	if(options.multiFile) {
 		fs.readdir(path, (err, files) => {
 			if(err) {
@@ -172,3 +239,5 @@ exports.validateLocales = function validateLocales(path, options, callback) {
 		});
 	}
 };
+
+exports.validateLocales = validateLocales;
