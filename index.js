@@ -1,7 +1,6 @@
 const Transform = require( 'stream' ).Transform;
 const fs = require( 'fs' );
 const mapping = require( './mapping.json' );
-const numbers = require( './numbers.json' );
 
 /**
  * @typedef GeneratorOptions
@@ -40,32 +39,33 @@ function toPseudoText(text, options) {
 		const isToken = function isToken(word) {
 			return word[0] === '{' && word[word.length - 1] === '}';
 		};
+		const expand = function expand(items, factor, callback) {
+			const extraCount = Math.round(items.length * factor);
+			let extraPosition = 0;
+			for (let i = 0; i < extraCount; i += 1) {
+				const position = Math.round(extraPosition);
+				const expandedPosition = Math.round((items.length + extraCount - 1) / (items.length - 1) * extraPosition) + 1;
+				callback(expandedPosition, items[position]);
+				extraPosition += (items.length - 1) / extraCount;
+			}
+		};
 
 		if(options.expander) {
-			const extraWordCount = Math.round(words.length * options.expander);
-			let extraWordPosition = 0;
-			for (let i = 0; i < extraWordCount; i += 1) {
-				const expandedPosition = Math.round((words.length + extraWordCount - 1) / (words.length - 1) * extraWordPosition) + 1;
-				const word = numbers.words[i % numbers.words.length];
-				words.splice(expandedPosition, 0, word);
-				extraWordPosition += (words.length - 1) / extraWordCount;
-			}
+			const extendedWords = words.slice(0);
+			expand(words, options.expander, (position, item) => {
+				extendedWords.splice(position, 0, item);
+			});
+			words = extendedWords;
 		}
 
 		if(options.wordexpander) {
 			const expandedWords = [];
 			words.forEach((word) => {
 				if(!isToken(word)) {
-					const extraChartCount = Math.round(word.length * options.wordexpander);
-					let extraChartPosition = 0;
 					let expandedWord = word;
-					for (let i = 0; i < extraChartCount; i += 1) {
-						const position = Math.round(extraChartPosition);
-						const expandedPosition = Math.round((word.length + extraChartCount - 1) / (word.length - 1) * extraChartPosition) + 1;
-						const char = word[position];
-						expandedWord = `${expandedWord.substring(0, expandedPosition)}${char}${expandedWord.substring(expandedPosition)}`;
-						extraChartPosition += (word.length - 1) / extraChartCount;
-					}
+					expand(word, options.wordexpander, (position, item) => {
+						expandedWord = `${expandedWord.substring(0, position)}${item}${expandedWord.substring(position)}`;
+					});
 					word = expandedWord;
 				}
 

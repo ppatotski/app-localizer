@@ -15,7 +15,7 @@ Application Localizer that helps with localizing applications.
 	- Multi-file locale support (see [example](#multi-file-locale-example) below)
 		* Polymer file structure
 		* Angular flat file structure
-* Pseudo locale generator (char mapping/words is taken from [pseudolocalization-tool](https://code.google.com/archive/p/pseudolocalization-tool/))
+* Pseudo locale generator (char mapping is taken from [pseudolocalization-tool](https://code.google.com/archive/p/pseudolocalization-tool/))
     - Accents on letters
     - Longer sentence
     - Longer word
@@ -40,7 +40,14 @@ const gulp = require('gulp');
 const localizer = require('app-localizer');
 
 gulp.task('validateLocales', function validateLocales(callback) {
-	localizer.validateLocales('locales/test2/', { multiFile: true, fileStructure: 'polymer' }, (result) => {
+	localizer.validateLocales('locales/app1/', { multiFile: true, fileStructure: 'polymer' }, undefined, (result) => {
+		// result contains missing labels if any
+		callback(result);
+	});
+});
+
+gulp.task('validateMultipleLocales', function validateMultipleLocales(callback) {
+	localizer.validateMultipleLocales(['locales/app1/', 'locales/app2/'], { multiFile: true, fileStructure: 'polymer' }, undefined, (result) => {
 		// result contains missing labels if any
 		callback(result);
 	});
@@ -71,6 +78,14 @@ gulp.task('locales', function generatePseudoLocale() {
 ```
 
 Generate pseudo locale text ([try it](https://runkit.com/58fc19cf15bef7001293bfb4/58fc19cf15bef7001293bfb5))
+
+> converts
+>
+> " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\""
+>
+> to
+>
+> " ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž(¦)˞″"
 
 ```javascript
 const localizer = require('app-localizer');

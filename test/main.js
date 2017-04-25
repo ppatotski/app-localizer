@@ -4,6 +4,14 @@ const File = require('vinyl');
 
 describe('app-localizer', function() {
 	describe('toPseudoText', function() {
+
+		it('mapping', function(done) {
+			const input = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\"";
+			const output = " ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž(¦)˞″";
+			assert.equal( localizer.toPseudoText(input, { accents: true }), output);
+			done();
+		});
+
 		it('without options', function(done) {
 			assert.equal( localizer.toPseudoText('some text'), 'some text');
 			done();
@@ -15,12 +23,12 @@ describe('app-localizer', function() {
 		});
 
 		it('with expander (long)', function(done) {
-			assert.equal(localizer.toPseudoText('some text', { expander: 0.6 }), 'some one text');
+			assert.equal(localizer.toPseudoText('some text', { expander: 0.6 }), 'some some text');
 			done();
 		});
 
 		it('with expander (longest)', function(done) {
-			assert.equal(localizer.toPseudoText('some text', { expander: 3 }), 'some one two text three four five six');
+			assert.equal(localizer.toPseudoText('some text', { expander: 3 }), 'some some some some text text text text');
 			done();
 		});
 
@@ -66,7 +74,7 @@ describe('app-localizer', function() {
 		});
 
 		it('all with tokens', function(done) {
-			assert.equal(localizer.toPseudoText('some text {0} and {{p}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ööñé ţţéẋţ {0} ţţŵö ååñð {{p}} ţţĥŕéé !!!]' + '\u202c\u200F');
+			assert.equal(localizer.toPseudoText('some text {token} and {{token}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F');
 			done();
 		});
 	});
