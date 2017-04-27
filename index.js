@@ -1,5 +1,6 @@
 const Transform = require( 'stream' ).Transform;
 const fs = require( 'fs' );
+const path = require( 'path' );
 const mapping = require( './mapping.json' );
 
 /**
@@ -200,15 +201,15 @@ exports.validateLocalesContent = validateLocalesContent;
 /**
  * Validates locales for missing labels.
  *
- * @param {string} path Path to locale files.
+ * @param {string} filePath Path to locale files.
  * @param {ValidateOptions} options Validate options.
  * @param {Object} baseLocale Locale that is used as a base for validating against to
  * (do not specify in case of validating all against all).
  * @param {function} callback Function callback with result of errors as a first parameter (result is undefined in case of success).
  */
-function validateLocales(path, options, baseLocale, callback) {
+function validateLocales(filePath, options, baseLocale, callback) {
 	if(options.multiFile) {
-		fs.readdir(path, (err, files) => {
+		fs.readdir(filePath, (err, files) => {
 			if(err) {
 				throw err;
 			}
@@ -216,7 +217,7 @@ function validateLocales(path, options, baseLocale, callback) {
 			const locales = {};
 			let fileCount = files.length;
 			files.forEach(file => {
-				fs.readFile(`${path}\\${file}`, (err, buffer) => {
+				fs.readFile(path.join(filePath, file), (err, buffer) => {
 					if(err) {
 						throw err;
 					}
@@ -232,7 +233,7 @@ function validateLocales(path, options, baseLocale, callback) {
 			});
 		});
 	} else {
-		fs.readFile(path, (err, buffer) => {
+		fs.readFile(filePath, (err, buffer) => {
 			if(err) {
 				throw err;
 			}
