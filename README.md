@@ -77,15 +77,57 @@ gulp.task('locales', function generatePseudoLocale() {
 });
 ```
 
+Generate pseudo locale json file from source (`grunt`)
+
+```javascript
+const localizer = require('app-localizer');
+
+module.exports = function gruntEntry(grunt) {
+	grunt.initConfig( {
+		pkg: grunt.file.readJSON( 'package.json' ),
+		pseudo: {
+			options: {
+				expander: 0.2,
+				exclamations: true,
+				brackets: true,
+				accents: true,
+				rightToLeft: false,
+				wordexpander: 0.5,
+			},
+			dist: {
+				files: {
+					'app/locales/pseudo.json': [ 'app/locales/en-us.json' ],
+				},
+			},
+		},
+	} );
+
+	grunt.registerMultiTask( 'pseudo', 'Pseudolocalize locale', function() {
+		const options = this.options();
+		this.files.forEach((file) => {
+			if (file.dest) {
+				file.src.forEach((source) => {
+					const text = grunt.file.read(source);
+					const result = localizer.pseudoLocalizeContent(options, text);
+
+					grunt.file.write(file.dest, result);
+				} );
+			}
+		} );
+	} );
+};
+
+```
+
 Generate pseudo locale text ([try it](https://runkit.com/58fc19cf15bef7001293bfb4/58fc19cf15bef7001293bfb5))
 
 > converts
 >
-> " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\""
+> " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz|~\""
 >
 > to
 >
-> " ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž(¦)˞″"
+> " ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž¦˞″"
 
 ```javascript
 const localizer = require('app-localizer');

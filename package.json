@@ -21,11 +21,13 @@
     "localization",
     "pseudo",
     "gulp",
+	"grunt",
     "internationalization",
     "i18n",
     "polymer",
     "angular",
     "gulpplugin",
+    "gruntplugin",
     "validate"
   ],
   "author": "Petr Patotski",
