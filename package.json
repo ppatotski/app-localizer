@@ -1,6 +1,6 @@
 {
   "name": "app-localizer",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Application Localizer",
   "main": "index.js",
   "devDependencies": {
@@ -21,7 +21,7 @@
     "localization",
     "pseudo",
     "gulp",
-	"grunt",
+    "grunt",
     "internationalization",
     "i18n",
     "polymer",
