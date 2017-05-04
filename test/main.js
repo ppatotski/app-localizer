@@ -73,6 +73,16 @@ describe('app-localizer', function() {
 			done();
 		});
 
+		it('with missing close token', function(done) {
+			assert.equal(localizer.toPseudoText('some text {token and {{token}}', { expander: 0.5, accents: true, wordexpander: 0.2 }), 'ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token and {{token}}');
+			done();
+		});
+
+		it('with missing open token', function(done) {
+			assert.equal(localizer.toPseudoText('some text token} and {{token}} end', { expander: 0.5, accents: true, wordexpander: 0.2 }), 'ššöɱé ššöɱé ţţéẋţ ţţéẋţ ţţöķéñ}  åñð { {token} {token} }} éñð');
+			done();
+		});
+
 		it('all with tokens', function(done) {
 			const result = '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F';
 			assert.equal(localizer.toPseudoText('some text {token} and {{token}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), result);
