@@ -77,6 +77,11 @@ describe('app-localizer', function() {
 			assert.equal(localizer.toPseudoText('some text {token} and {{token}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F');
 			done();
 		});
+
+		it('all with ext tokens', function(done) {
+			assert.equal(localizer.toPseudoText('some text {token, number} and {{token, number, percent}} the end', { expander: 0.5, accents: true, rightToLeft: false, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F');
+			done();
+		});
 	});
 
 	describe('pseudoLocalize', function() {

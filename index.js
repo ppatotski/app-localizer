@@ -27,6 +27,28 @@ const mapping = require( './mapping.json' );
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
 */
 
+
+function splitIntoWords(text) {
+	const sentances = text.split(/({{[^}}]+}})/g);
+	let result = [];
+	sentances.forEach((sentance) => {
+		if(sentance[0] === '{' && sentance[sentance.length - 1] === '}') {
+			result.push(sentance);
+		} else {
+			const subsentances = sentance.split(/(\{[^\}]+\})/g);
+			subsentances.forEach((subsentance) => {
+				if(subsentance[0] === '{' && subsentance[subsentance.length - 1] === '}') {
+					result.push(subsentance);
+				} else {
+					result.push(...subsentance.split(' '));
+				}
+			});
+		}
+	});
+
+	return result;
+}
+
 /**
  * Generates pseudo text.
  *
@@ -36,7 +58,7 @@ const mapping = require( './mapping.json' );
  */
 function toPseudoText(text, options) {
 	if(options && text) {
-		let words = text.split(' ');
+		let words = splitIntoWords(text);
 		const isToken = function isToken(word) {
 			return word[0] === '{' && word[word.length - 1] === '}';
 		};
@@ -54,10 +76,13 @@ function toPseudoText(text, options) {
 		if(options.expander) {
 			const extendedWords = words.slice(0);
 			expand(words, options.expander, (position, item) => {
-				extendedWords.splice(position, 0, item);
+				if(!isToken(item)) {
+					extendedWords.splice(position - 1, 0, item);
+				}
 			});
 			words = extendedWords;
 		}
+		console.log(words);
 
 		if(options.wordexpander) {
 			const expandedWords = [];
@@ -79,7 +104,7 @@ function toPseudoText(text, options) {
 			const accentedWords = [];
 			words.forEach((word) => {
 				if(!isToken(word)) {
-					word = [...word].map(char => mapping[char]).join('');
+					word = [...word].map(char => mapping[char] ? mapping[char] : char).join('');
 				}
 
 				accentedWords.push(word);
@@ -102,7 +127,21 @@ function toPseudoText(text, options) {
 			}
 		}
 
-		text = words.join(' ');
+		text = '';
+		let wasToken = false;
+		words.forEach((word, index) => {
+			if(isToken(word)) {
+				text += word;
+				wasToken = true;
+			} else {
+				if(wasToken || index === 0 || (index === (words.length - 1) && word === '')) {
+					text += word;
+				} else {
+					text += ` ${word}`;
+				}
+				wasToken = false;
+			}
+		});
 
 		if(options.rightToLeft) {
 			const RLO = '\u202e';
