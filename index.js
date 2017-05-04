@@ -58,7 +58,6 @@ function splitIntoWords(text) {
 	if (word !== '') {
 		result.push(word);
 	}
-	console.log(result);
 	return result;
 }
 
