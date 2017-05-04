@@ -27,6 +27,40 @@ const mapping = require( './mapping.json' );
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
 */
 
+function splitIntoWords(text) {
+	let result = [];
+	let tokenIndex = 0;
+	let word = '';
+	[...text].forEach((char) => {
+		if(char === '{') {
+			if(!tokenIndex && word) {
+				result.push(word);
+				word = '';
+			}
+			tokenIndex++;
+			word += char;
+		} else if(char === '}') {
+			tokenIndex--;
+			word += char;
+			if(!tokenIndex) {
+				result.push(word);
+				word = '';
+			}
+		} else if (char === ' ' && !tokenIndex) {
+			if (word !== '') {
+				result.push(word);
+			}
+			word = '';
+		} else {
+			word += char;
+		}
+	});
+	if (word !== '') {
+		result.push(word);
+	}
+	return result;
+}
+
 /**
  * Generates pseudo text.
  *
@@ -36,7 +70,7 @@ const mapping = require( './mapping.json' );
  */
 function toPseudoText(text, options) {
 	if(options && text) {
-		let words = text.split(' ');
+		let words = splitIntoWords(text);
 		const isToken = function isToken(word) {
 			return word[0] === '{' && word[word.length - 1] === '}';
 		};
@@ -79,7 +113,7 @@ function toPseudoText(text, options) {
 			const accentedWords = [];
 			words.forEach((word) => {
 				if(!isToken(word)) {
-					word = [...word].map(char => mapping[char]).join('');
+					word = [...word].map(char => mapping[char] ? mapping[char] : char).join('');
 				}
 
 				accentedWords.push(word);
@@ -103,6 +137,20 @@ function toPseudoText(text, options) {
 		}
 
 		text = words.join(' ');
+		// let wasToken = false;
+		// words.forEach((word, index) => {
+		// 	if(isToken(word)) {
+		// 		text += word;
+		// 		wasToken = true;
+		// 	} else {
+		// 		if(wasToken || index === 0 || (index === (words.length - 1) && word === '')) {
+		// 			text += word;
+		// 		} else {
+		// 			text += ` ${word}`;
+		// 		}
+		// 		wasToken = false;
+		// 	}
+		// });
 
 		if(options.rightToLeft) {
 			const RLO = '\u202e';
