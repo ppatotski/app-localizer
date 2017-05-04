@@ -7,7 +7,7 @@ describe('app-localizer', function() {
 
 		it('mapping', function(done) {
 			const input = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz|~\"";
-			const output = " ¡″♯€‰⅋´❨❩⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž¦˞″";
+			const output = "¡″♯€‰⅋´❨❩⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž¦˞″";
 			assert.equal( localizer.toPseudoText(input, { accents: true }), output);
 			done();
 		});
@@ -74,12 +74,20 @@ describe('app-localizer', function() {
 		});
 
 		it('all with tokens', function(done) {
-			assert.equal(localizer.toPseudoText('some text {token} and {{token}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F');
+			const result = '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F';
+			assert.equal(localizer.toPseudoText('some text {token} and {{token}}', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), result);
 			done();
 		});
 
 		it('all with ext tokens', function(done) {
-			assert.equal(localizer.toPseudoText('some text {token, number} and {{token, number, percent}} the end', { expander: 0.5, accents: true, rightToLeft: false, exclamations: true, brackets: true, wordexpander: 0.2 }), '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ţţéẋţ {token} ååñð ååñð {{token}} !!!]' + '\u202c\u200F');
+			const result = '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ ❨ ❨ {token, number} {token, number} ❩ ååñð ååñð {{token, number, percent}} {{token, number, percent}} ţţĥé ééñð !!!]' + '\u202c\u200F';
+			assert.equal(localizer.toPseudoText('some text ({token, number}) and {{token, number, percent}} the end', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), result);
+			done();
+		});
+
+		it('all with nested tokens', function(done) {
+			const result = '\u200F\u202e' + '[!!! ššöɱé ššöɱé ţţéẋţ { token, {number { and some text } }} { token, {number { and some text } }} ååñð ååñð {{ token, {number}, percent}} ţţĥé ţţĥé ééñð !!!]' + '\u202c\u200F';
+			assert.equal(localizer.toPseudoText('some text { token, {number { and some text } }} and {{ token, {number}, percent}} the end', { expander: 0.5, accents: true, rightToLeft: true, exclamations: true, brackets: true, wordexpander: 0.2 }), result);
 			done();
 		});
 	});

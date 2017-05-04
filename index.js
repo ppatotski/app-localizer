@@ -27,25 +27,38 @@ const mapping = require( './mapping.json' );
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
 */
 
-
 function splitIntoWords(text) {
-	const sentances = text.split(/({{[^}}]+}})/g);
 	let result = [];
-	sentances.forEach((sentance) => {
-		if(sentance[0] === '{' && sentance[sentance.length - 1] === '}') {
-			result.push(sentance);
+	let tokenIndex = 0;
+	let word = '';
+	[...text].forEach((char) => {
+		if(char === '{') {
+			if(!tokenIndex && word) {
+				result.push(word);
+				word = '';
+			}
+			tokenIndex++;
+			word += char;
+		} else if(char === '}') {
+			tokenIndex--;
+			word += char;
+			if(!tokenIndex) {
+				result.push(word);
+				word = '';
+			}
+		} else if (char === ' ' && !tokenIndex) {
+			if (word !== '') {
+				result.push(word);
+			}
+			word = '';
 		} else {
-			const subsentances = sentance.split(/(\{[^\}]+\})/g);
-			subsentances.forEach((subsentance) => {
-				if(subsentance[0] === '{' && subsentance[subsentance.length - 1] === '}') {
-					result.push(subsentance);
-				} else {
-					result.push(...subsentance.split(' '));
-				}
-			});
+			word += char;
 		}
 	});
-
+	if (word !== '') {
+		result.push(word);
+	}
+	console.log(result);
 	return result;
 }
 
@@ -76,13 +89,10 @@ function toPseudoText(text, options) {
 		if(options.expander) {
 			const extendedWords = words.slice(0);
 			expand(words, options.expander, (position, item) => {
-				if(!isToken(item)) {
-					extendedWords.splice(position - 1, 0, item);
-				}
+				extendedWords.splice(position, 0, item);
 			});
 			words = extendedWords;
 		}
-		console.log(words);
 
 		if(options.wordexpander) {
 			const expandedWords = [];
@@ -127,21 +137,21 @@ function toPseudoText(text, options) {
 			}
 		}
 
-		text = '';
-		let wasToken = false;
-		words.forEach((word, index) => {
-			if(isToken(word)) {
-				text += word;
-				wasToken = true;
-			} else {
-				if(wasToken || index === 0 || (index === (words.length - 1) && word === '')) {
-					text += word;
-				} else {
-					text += ` ${word}`;
-				}
-				wasToken = false;
-			}
-		});
+		text = words.join(' ');
+		// let wasToken = false;
+		// words.forEach((word, index) => {
+		// 	if(isToken(word)) {
+		// 		text += word;
+		// 		wasToken = true;
+		// 	} else {
+		// 		if(wasToken || index === 0 || (index === (words.length - 1) && word === '')) {
+		// 			text += word;
+		// 		} else {
+		// 			text += ` ${word}`;
+		// 		}
+		// 		wasToken = false;
+		// 	}
+		// });
 
 		if(options.rightToLeft) {
 			const RLO = '\u202e';
