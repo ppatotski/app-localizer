@@ -2,6 +2,7 @@ const Transform = require( 'stream' ).Transform;
 const fs = require( 'fs' );
 const path = require( 'path' );
 const mapping = require( './mapping.json' );
+const messageParser = require( 'intl-messageformat-parser' );
 
 /**
  * @typedef GeneratorOptions
@@ -68,12 +69,9 @@ function splitIntoWords(text) {
  * @param {GeneratorOptions} options Generator options:
  * @returns {string} Pseudo generated text
  */
-function toPseudoText(text, options) {
-	if(options && text) {
-		let words = splitIntoWords(text);
-		const isToken = function isToken(word) {
-			return word[0] === '{' && word[word.length - 1] === '}';
-		};
+function generate(text, options) {
+	if(options && text && text !== ' ') {
+		let words = text.split(' ');
 		const expand = function expand(items, factor, callback) {
 			const extraCount = Math.round(items.length * factor);
 			let extraPosition = 0;
@@ -96,15 +94,11 @@ function toPseudoText(text, options) {
 		if(options.wordexpander) {
 			const expandedWords = [];
 			words.forEach((word) => {
-				if(!isToken(word)) {
-					let expandedWord = word;
-					expand(word, options.wordexpander, (position, item) => {
-						expandedWord = `${expandedWord.substring(0, position)}${item}${expandedWord.substring(position)}`;
-					});
-					word = expandedWord;
-				}
-
-				expandedWords.push(word);
+				let expandedWord = word;
+				expand(word, options.wordexpander, (position, item) => {
+					expandedWord = `${expandedWord.substring(0, position)}${item}${expandedWord.substring(position)}`;
+				});
+				expandedWords.push(expandedWord);
 			});
 			words = expandedWords;
 		}
@@ -112,54 +106,112 @@ function toPseudoText(text, options) {
 		if(options.accents) {
 			const accentedWords = [];
 			words.forEach((word) => {
-				if(!isToken(word)) {
-					word = [...word].map(char => mapping[char] ? mapping[char] : char).join('');
-				}
-
+				word = [...word].map(char => mapping[char] ? mapping[char] : char).join('');
 				accentedWords.push(word);
 			});
 			words = accentedWords;
 		}
 
-		if(options.exclamations) {
-			words.splice(0, 0, '!!!');
-			words.push('!!!');
-		}
+		text = words.join(' ');
+	}
+	return text;
+};
 
-		if(options.brackets) {
-			if(options.exclamations) {
-				words[0] = '[!!!';
-				words[words.length - 1] = '!!!]';
-			} else {
-				words.splice(0, 0, '[');
-				words.push(']');
+function walkTree(node, parts) {
+	switch(node.type) {
+		case 'messageTextElement':
+			parts.push({ token: false, text: node.value });
+			break;
+		case 'messageFormatPattern':
+			node.elements.forEach((subnode) => walkTree(subnode, parts));
+			break;
+		case 'argumentElement':
+			parts.push({ token: true, text: `{${node.id}` });
+			if(node.format) {
+				walkTree(node.format, parts);
+			}
+			parts.push({ token: true, text: '}' });
+			break;
+		case 'pluralFormat':
+			parts.push({ token: true, text: `, ${node.ordinal ? 'selectordinal' : 'plural'},` });
+			if(node.options) {
+				node.options.forEach((subnode) => walkTree(subnode, parts));
+			}
+			break;
+		case 'selectFormat':
+			parts.push({ token: true, text: `, select,` });
+			if(node.options) {
+				node.options.forEach((subnode) => walkTree(subnode, parts));
+			}
+			break;
+		case 'optionalFormatPattern':
+			parts.push({ token: true, text: ` ${node.selector} {` });
+			walkTree(node.value, parts);
+			parts.push({ token: true, text: '}' });
+			break;
+		case 'dateFormat':
+		case 'numberFormat':
+		case 'timeFormat':
+			parts.push({ token: true, text: `, ${node.type.substring(0, node.type.length - 'Format'.length)}, ${node.style}${node.offset ? `, offset:${node.offset}`: ''}` });
+			break;
+	}
+};
+
+/**
+ * Generates pseudo text.
+ *
+ * @param {string} text Input text.
+ * @param {GeneratorOptions} options Generator options:
+ * @returns {string} Pseudo generated text
+ */
+function toPseudoText(text, options) {
+	let result = text;
+	if(options) {
+		let message = undefined;
+		try {
+			message = messageParser.parse(text);
+		} catch(err) {
+			if(options.forceException) {
+				throw err;
 			}
 		}
 
-		text = words.join(' ');
-		// let wasToken = false;
-		// words.forEach((word, index) => {
-		// 	if(isToken(word)) {
-		// 		text += word;
-		// 		wasToken = true;
-		// 	} else {
-		// 		if(wasToken || index === 0 || (index === (words.length - 1) && word === '')) {
-		// 			text += word;
-		// 		} else {
-		// 			text += ` ${word}`;
-		// 		}
-		// 		wasToken = false;
-		// 	}
-		// });
+		const parts = [];
+		if(message) {
+			walkTree(message, parts, options);
+		} else {
+			parts.push({ text });
+		}
+		//console.log(JSON.stringify(parts.map((part) => part.text)));
+		for (let index = 0; index < parts.length; index++) {
+			if(!parts[index].token && parts[index].text !== ' ') {
+				const startsFromSpace = parts[index].text[0] === ' ';
+				const endsWithSpace = parts[index].text[parts[index].text.length - 1] === ' ';
+
+				parts[index].text = `${startsFromSpace ? ' ': ''}${generate(parts[index].text.trim(), options)}${endsWithSpace ? ' ': ''}`;
+			}
+		}
+
+		if(options.exclamations) {
+			parts.splice(0, 0, { text: '!!! ' });
+			parts.push({ text: ' !!!' });
+		}
+
+		if(options.brackets) {
+			parts.splice(0, 0, { text: '[ ' });
+			parts.push({ text: ' ]' });
+		}
+
+		result = parts.map((part) => part.text).join('');
 
 		if(options.rightToLeft) {
 			const RLO = '\u202e';
 			const PDF = '\u202c';
 			const RLM = '\u200F';
-			text = RLM + RLO + text + PDF + RLM;
+			result = RLM + RLO + result + PDF + RLM;
 		}
 	}
-	return text;
+	return result;
 };
 
 exports.toPseudoText = toPseudoText;
