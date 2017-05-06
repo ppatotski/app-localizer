@@ -13,6 +13,7 @@ const messageParser = require( 'intl-messageformat-parser' );
  * @property {boolean} exclamations Enclose in exclamations.
  * @property {boolean} brackets Enclose in brackets.
  * @property {boolean} rightToLeft Left-to-Right.
+ * @property {boolean} forceException throw syntax exception if any.
  *
  * @typedef PseudoLocalizerOptions
  * @property {number} expander Sentance expanding factor (0.3 = 30%).
@@ -28,48 +29,14 @@ const messageParser = require( 'intl-messageformat-parser' );
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
 */
 
-function splitIntoWords(text) {
-	let result = [];
-	let tokenIndex = 0;
-	let word = '';
-	[...text].forEach((char) => {
-		if(char === '{') {
-			if(!tokenIndex && word) {
-				result.push(word);
-				word = '';
-			}
-			tokenIndex++;
-			word += char;
-		} else if(char === '}') {
-			tokenIndex--;
-			word += char;
-			if(!tokenIndex) {
-				result.push(word);
-				word = '';
-			}
-		} else if (char === ' ' && !tokenIndex) {
-			if (word !== '') {
-				result.push(word);
-			}
-			word = '';
-		} else {
-			word += char;
-		}
-	});
-	if (word !== '') {
-		result.push(word);
-	}
-	return result;
-}
-
 /**
- * Generates pseudo text.
+ * Transform sentences into expanded sentences with accents.
  *
- * @param {string} text Input text.
- * @param {GeneratorOptions} options Generator options:
- * @returns {string} Pseudo generated text
+ * @param {string} text Sentences.
+ * @param {GeneratorOptions} options Generator options.
+ * @returns {string} Pseudo generated sentences.
  */
-function generate(text, options) {
+function transformSentences(text, options) {
 	if(options && text && text !== ' ') {
 		let words = text.split(' ');
 		const expand = function expand(items, factor, callback) {
@@ -117,36 +84,52 @@ function generate(text, options) {
 	return text;
 };
 
-function walkTree(node, parts) {
+/**
+ * Walk through parsed AST.
+ *
+ * @param {Object} node parsed AST.
+ * @param {Object[]} parts List of text parts.
+ */
+function walkAST(node, parts) {
 	switch(node.type) {
 		case 'messageTextElement':
-			parts.push({ token: false, text: node.value });
+			// Hashtag is a key word
+			const hash = node.value.split('#');
+			if(hash.length > 1) {
+				hash.forEach((part) => {
+					parts.push({ token: false, text: part });
+					parts.push({ token: true, text: '#' });
+				});
+				parts.pop();
+			} else {
+				parts.push({ token: false, text: node.value });
+			}
 			break;
 		case 'messageFormatPattern':
-			node.elements.forEach((subnode) => walkTree(subnode, parts));
+			node.elements.forEach((subnode) => walkAST(subnode, parts));
 			break;
 		case 'argumentElement':
 			parts.push({ token: true, text: `{${node.id}` });
 			if(node.format) {
-				walkTree(node.format, parts);
+				walkAST(node.format, parts);
 			}
 			parts.push({ token: true, text: '}' });
 			break;
 		case 'pluralFormat':
 			parts.push({ token: true, text: `, ${node.ordinal ? 'selectordinal' : 'plural'},` });
 			if(node.options) {
-				node.options.forEach((subnode) => walkTree(subnode, parts));
+				node.options.forEach((subnode) => walkAST(subnode, parts));
 			}
 			break;
 		case 'selectFormat':
 			parts.push({ token: true, text: `, select,` });
 			if(node.options) {
-				node.options.forEach((subnode) => walkTree(subnode, parts));
+				node.options.forEach((subnode) => walkAST(subnode, parts));
 			}
 			break;
 		case 'optionalFormatPattern':
 			parts.push({ token: true, text: ` ${node.selector} {` });
-			walkTree(node.value, parts);
+			walkAST(node.value, parts);
 			parts.push({ token: true, text: '}' });
 			break;
 		case 'dateFormat':
@@ -161,7 +144,7 @@ function walkTree(node, parts) {
  * Generates pseudo text.
  *
  * @param {string} text Input text.
- * @param {GeneratorOptions} options Generator options:
+ * @param {GeneratorOptions} options Generator options
  * @returns {string} Pseudo generated text
  */
 function toPseudoText(text, options) {
@@ -178,17 +161,18 @@ function toPseudoText(text, options) {
 
 		const parts = [];
 		if(message) {
-			walkTree(message, parts, options);
+			walkAST(message, parts, options);
 		} else {
 			parts.push({ text });
 		}
-		//console.log(JSON.stringify(parts.map((part) => part.text)));
+
 		for (let index = 0; index < parts.length; index++) {
 			if(!parts[index].token && parts[index].text !== ' ') {
+				// Text part can start or end with space
 				const startsFromSpace = parts[index].text[0] === ' ';
 				const endsWithSpace = parts[index].text[parts[index].text.length - 1] === ' ';
 
-				parts[index].text = `${startsFromSpace ? ' ': ''}${generate(parts[index].text.trim(), options)}${endsWithSpace ? ' ': ''}`;
+				parts[index].text = `${startsFromSpace ? ' ': ''}${transformSentences(parts[index].text.trim(), options)}${endsWithSpace ? ' ': ''}`;
 			}
 		}
 
@@ -221,7 +205,7 @@ exports.toPseudoText = toPseudoText;
  *
  * @param {PseudoLocalizerOptions} options Generator options.
  * @param {string} text Input json file content.
- * @returns {string} Pseudo generated json content
+ * @returns {string} Pseudo generated json content.
  */
 function pseudoLocalizeContent(options, text) {
 	let locale = JSON.parse(text);
@@ -268,7 +252,7 @@ exports.pseudoLocalize = pseudoLocalize;
  * @param {Object} locales Object with all locales.
  * @param {Object} baseLocale Locale that is used as a base for validating against to
  * (do not specify in case of validating all against all).
- * @returns {Object} Validation result
+ * @returns {Object} Validation result.
  */
 function validateLocalesContent(locales, baseLocale) {
 	let result = undefined;

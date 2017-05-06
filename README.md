@@ -1,10 +1,14 @@
 # Application Localizer
 
-Application Localizer that helps with localizing applications.
+Application Localizer package that helps with localizing applications.
 
 [![NPM version](https://img.shields.io/npm/v/app-localizer.svg)](https://www.npmjs.com/package/app-localizer)
 
-> used by vscode-app-localizer vscode extension
+> uses [Intl MessageFormat Parser](https://github.com/yahoo/intl-messageformat-parser) that parses ICU Message strings into an AST.
+>
+> tested with [Intl MessageFormat](https://github.com/yahoo/intl-messageformat) that formats ICU Message strings with number, date, plural, and select placeholders to create localized messages.
+>
+> used by [vscode-app-localizer](https://github.com/ppatotski/vscode-app-localizer) vscode extension
 >
 > [![VSCode Extension Release](http://vsmarketplacebadge.apphb.com/version/gsppvo.vscode-app-localizer.svg)](https://marketplace.visualstudio.com/items?itemName=gsppvo.vscode-app-localizer)
 
@@ -22,6 +26,7 @@ Application Localizer that helps with localizing applications.
     - Right-to-Left
     - Enclose in exclamations
     - Enclose in brackets
+	- Support [ICU Message syntax](https://formatjs.io/guides/message-syntax/)
 
 ## Install
 
@@ -72,7 +77,8 @@ gulp.task('locales', function generatePseudoLocale() {
 			rightToLeft: false,
 			exclamations: true,
 			brackets: true,
-			wordexpander: 0.5 }))
+			wordexpander: 0.5,
+			forceException: false }))
 		.pipe(gulp.dest('dist/locales/'));
 });
 ```
@@ -93,6 +99,7 @@ module.exports = function gruntEntry(grunt) {
 				accents: true,
 				rightToLeft: false,
 				wordexpander: 0.5,
+				forceException: false,
 			},
 			dist: {
 				files: {
@@ -121,13 +128,13 @@ module.exports = function gruntEntry(grunt) {
 
 Generate pseudo locale text ([try it](https://runkit.com/58fc19cf15bef7001293bfb4/58fc19cf15bef7001293bfb5))
 
-> converts
+> transforms
 >
-> " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz|~\""
+> ` !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz|~`
 >
-> to
+> into
 >
-> " ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž¦˞″"
+> ` ¡″♯€‰⅋´{}⁎⁺،‐·⁄⓪①②③④⑤⑥⑦⑧⑨∶⁏≤≂≥¿՞ÅƁÇÐÉƑĜĤÎĴĶĻṀÑÖÞǪŔŠŢÛṼŴẊÝŽ⁅∖⁆˄‿‵åƀçðéƒĝĥîĵķļɱñöþǫŕšţûṽŵẋýž¦˞`
 
 ```javascript
 const localizer = require('app-localizer');
@@ -138,7 +145,8 @@ const pseudoText = localizer.toPseudoText(text, {
 	brackets: true,
 	accents: true,
 	rightToLeft: false,
-	wordexpander: 0.5
+	wordexpander: 0.5,
+	forceException: false
 });
 ```
 
@@ -186,6 +194,9 @@ const pseudoText = localizer.toPseudoText(text, {
 	"label3": "blah4"
 }
 ```
+## Change Log
+
+[Change Log](CHANGELOG.md)
 
 ## License
 
