@@ -1,6 +1,6 @@
 {
   "name": "app-localizer",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "description": "Application Localizer",
   "jsnext:main": "src/localizer.js",
   "main": "index.js",
@@ -35,7 +35,7 @@
     "gulpplugin",
     "gruntplugin",
     "validate",
-	"browser"
+    "browser"
   ],
   "author": "Petr Patotski",
   "license": "MIT",
