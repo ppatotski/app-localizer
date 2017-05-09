@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.12 (May 9, 2017)
+- Improvement: browser support
+
 ## 1.1.11 (May 6, 2017)
 - Improvement: leverages intl-messageformat-parser for improving pseudo generator
 
