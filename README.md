@@ -27,11 +27,12 @@ Application Localizer package that helps with localizing applications.
     - Enclose in exclamations
     - Enclose in brackets
 	- Support [ICU Message syntax](https://formatjs.io/guides/message-syntax/)
+* Cross-platform
 
 ## Install
 
 ```shell
-npm install --save-dev app-localizer
+npm install app-localizer
 ```
 
 ## Usage
@@ -78,7 +79,8 @@ gulp.task('locales', function generatePseudoLocale() {
 			exclamations: true,
 			brackets: true,
 			wordexpander: 0.5,
-			forceException: false }))
+			forceException: false,
+			pseudoLocaleName: 'en-us' }))
 		.pipe(gulp.dest('dist/locales/'));
 });
 ```
@@ -100,6 +102,7 @@ module.exports = function gruntEntry(grunt) {
 				rightToLeft: false,
 				wordexpander: 0.5,
 				forceException: false,
+				pseudoLocaleName: 'en-us'
 			},
 			dist: {
 				files: {
@@ -123,7 +126,25 @@ module.exports = function gruntEntry(grunt) {
 		} );
 	} );
 };
+```
 
+Generate pseudo pseudo text (`browser`)
+
+```shell
+npm install intl-messageformat-parser
+npm install app-localizer
+```
+
+```html
+	<script type="text/javascript" src="/node_modules/intl-messageformat-parser/dist/parser.js" defer></script>
+	<script type="text/javascript" src="/node_modules/app-localizer/localizer.js" defer></script>
+	<script type="text/javascript">
+		function transform() {
+			'use strict';
+			const text = AppLocalizer.toPseudoText('some text', { expander: 0.5, accents: true, wordexpander: 0.2 }, IntlMessageFormatParser);
+			console.log(text);
+		}
+	</script>
 ```
 
 Generate pseudo locale text ([try it](https://runkit.com/58fc19cf15bef7001293bfb4/58fc19cf15bef7001293bfb5))
