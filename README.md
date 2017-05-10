@@ -79,7 +79,8 @@ gulp.task('locales', function generatePseudoLocale() {
 			exclamations: true,
 			brackets: true,
 			wordexpander: 0.5,
-			forceException: false }))
+			forceException: false,
+			pseudoLocaleName: 'en-us' }))
 		.pipe(gulp.dest('dist/locales/'));
 });
 ```
@@ -101,6 +102,7 @@ module.exports = function gruntEntry(grunt) {
 				rightToLeft: false,
 				wordexpander: 0.5,
 				forceException: false,
+				pseudoLocaleName: 'en-us'
 			},
 			dist: {
 				files: {

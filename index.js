@@ -23,7 +23,7 @@ const localizer = require( './localizer.js' ).AppLocalizer;
  * @property {boolean} brackets Enclose in brackets.
  * @property {boolean} rightToLeft Left-to-Right.
  * @property {string} format Structure of locale file content (polymer, angular.flat).
- * @property {string} localeName Name of pseudo locale.
+ * @property {string} pseudoLocaleName Name of pseudo locale.
  *
  * @typedef ValidateOptions
  * @property {boolean} multiFile Locale is localed in separate file.
@@ -66,7 +66,7 @@ function pseudoLocalizeContent(options, text) {
 	let result = transformed;
 	if (localename) {
 		result = {};
-		result[options.localeName ? options.localeName : 'pseudo'] = transformed;
+		result[options.pseudoLocaleName ? options.pseudoLocaleName : 'pseudo'] = transformed;
 	}
 
 	return JSON.stringify( result, null, '\t' );

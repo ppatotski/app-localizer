@@ -126,8 +126,8 @@ describe('app-localizer', function() {
 
 	describe('pseudoLocalize', function() {
 		it('pseudo localize polymer', function(done) {
-			const result = '{\n	"pseudo": {\n		"label1": "sssooommmmee {token1} ttteeexxxxtt {token2}"\n	}\n}';
-			assert.equal(localizer.pseudoLocalizeContent({ wordexpander: 2 }, '{ "en-us": { "label1": "some {token1} text {token2}" } }'), result);
+			const result = '{\n	"fr-be": {\n		"label1": "sssooommmmee {token1} ttteeexxxxtt {token2}"\n	}\n}';
+			assert.equal(localizer.pseudoLocalizeContent({ wordexpander: 2, pseudoLocaleName: 'fr-be' }, '{ "en-us": { "label1": "some {token1} text {token2}" } }'), result);
 			done();
 		});
 
