@@ -88,11 +88,11 @@ describe('app-localizer', function() {
 		});
 
 		it('all with tokens Formatted Argument', function(done) {
-			const input = 'On {takenDate, date, YYYY} {name} took {pctBlack, number, percent} for {takenDate, time, full}';
-			const output = 'Öñ Öñ {takenDate, date, YYYY} {name} ţţööķ ţţööķ {pctBlack, number, percent} ƒƒöŕ ƒƒöŕ {takenDate, time, full}';
+			const input = 'On {takenDate, date, YYYY} {name} took {pctBlack, number, percent} for {takenDate, time, full} and {pctBlack, number}';
+			const output = 'Öñ Öñ {takenDate, date, YYYY} {name} ţţööķ ţţööķ {pctBlack, number, percent} ƒƒöŕ ƒƒöŕ {takenDate, time, full} ååñð ååñð {pctBlack, number}';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
 			var msg = new IntlMessageFormat(output);
-			assert.equal(msg.format({ takenDate: new Date('5/6/2017'), name: 'petr', pctBlack: 0.33 }), 'Öñ Öñ 5/6/2017 petr ţţööķ ţţööķ 33% ƒƒöŕ ƒƒöŕ 12:00:00 AM EDT');
+			assert.equal(msg.format({ takenDate: new Date('5/6/2017'), name: 'petr', pctBlack: 0.33 }), 'Öñ Öñ 5/6/2017 petr ţţööķ ţţööķ 33% ƒƒöŕ ƒƒöŕ 12:00:00 AM EDT ååñð ååñð 0.33');
 			done();
 		});
 

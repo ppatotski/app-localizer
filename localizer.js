@@ -228,7 +228,7 @@
 				case 'dateFormat':
 				case 'numberFormat':
 				case 'timeFormat':
-					parts.push({ token: true, text: `, ${node.type.substring(0, node.type.length - 'Format'.length)}, ${node.style}${node.offset ? `, offset:${node.offset}`: ''}` });
+					parts.push({ token: true, text: `, ${node.type.substring(0, node.type.length - 'Format'.length)}${node.style ? `, ${node.style}` : ''}${node.offset ? `, offset:${node.offset}`: ''}` });
 					break;
 			}
 		};

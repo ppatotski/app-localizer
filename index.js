@@ -23,6 +23,7 @@ const localizer = require( './localizer.js' ).AppLocalizer;
  * @property {boolean} brackets Enclose in brackets.
  * @property {boolean} rightToLeft Left-to-Right.
  * @property {string} format Structure of locale file content (polymer, angular.flat).
+ * @property {string} localeName Name of pseudo locale.
  *
  * @typedef ValidateOptions
  * @property {boolean} multiFile Locale is localed in separate file.
@@ -52,17 +53,23 @@ exports.toPseudoText = toPseudoText;
 function pseudoLocalizeContent(options, text) {
 	let locale = JSON.parse(text);
 	const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
-	const result = {};
+	const transformed = {};
 
 	if (localename) {
 		locale = locale[localename];
 	}
 
 	Object.keys(locale).forEach((key) => {
-		result[key] = toPseudoText(locale[key], options);
+		transformed[key] = toPseudoText(locale[key], options);
 	} );
 
-	return JSON.stringify( localename ? { pseudo: result } : result, null, '\t' );
+	let result = transformed;
+	if (localename) {
+		result = {};
+		result[options.localeName ? options.localeName : 'pseudo'] = transformed;
+	}
+
+	return JSON.stringify( result, null, '\t' );
 };
 
 exports.pseudoLocalizeContent = pseudoLocalizeContent;
