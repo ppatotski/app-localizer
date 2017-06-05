@@ -209,16 +209,12 @@
 					parts.push({ token: true, text: '}' });
 					break;
 				case 'pluralFormat':
-					parts.push({ token: true, text: `, ${node.ordinal ? 'selectordinal' : 'plural'},` });
-					if(node.options) {
-						node.options.forEach((subnode) => walkAST(subnode, parts));
-					}
+					parts.push({ token: true, text: `, ${node.ordinal ? 'selectordinal' : 'plural'},${node.offset ? ` offset:${node.offset}`: ''}` });
+					node.options.forEach((subnode) => walkAST(subnode, parts));
 					break;
 				case 'selectFormat':
 					parts.push({ token: true, text: `, select,` });
-					if(node.options) {
-						node.options.forEach((subnode) => walkAST(subnode, parts));
-					}
+					node.options.forEach((subnode) => walkAST(subnode, parts));
 					break;
 				case 'optionalFormatPattern':
 					parts.push({ token: true, text: ` ${node.selector} {` });
@@ -228,7 +224,7 @@
 				case 'dateFormat':
 				case 'numberFormat':
 				case 'timeFormat':
-					parts.push({ token: true, text: `, ${node.type.substring(0, node.type.length - 'Format'.length)}${node.style ? `, ${node.style}` : ''}${node.offset ? `, offset:${node.offset}`: ''}` });
+					parts.push({ token: true, text: `, ${node.type.substring(0, node.type.length - 'Format'.length)}${node.style ? `, ${node.style}` : ''}` });
 					break;
 			}
 		};

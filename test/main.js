@@ -115,11 +115,11 @@ describe('app-localizer', function() {
 		});
 
 		it('all with tokens {selectordinal} Format', function(done) {
-			const input = 'It\'s my cat\'s {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!';
-			const output = 'ÎÎţ´š ÎÎţ´š ɱý ɱý ççåţ´š {year, selectordinal, one {#šţ šţ} two {#ñð ñð} few {#ŕð ŕð} other {#ţĥ ţĥ}} ƀƀîŕţĥĥðåý¡ ƀƀîŕţĥĥðåý¡';
+			const input = 'It\'s my cat\'s {year, selectordinal, offset:1 one {#st} two {#nd} few {#rd} other {#th}} birthday!';
+			const output = 'ÎÎţ´š ÎÎţ´š ɱý ɱý ççåţ´š {year, selectordinal, offset:1 one {#šţ šţ} two {#ñð ñð} few {#ŕð ŕð} other {#ţĥ ţĥ}} ƀƀîŕţĥĥðåý¡ ƀƀîŕţĥĥðåý¡';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
 			var msg = new IntlMessageFormat(output);
-			assert.equal(msg.format({ year: 2 }), 'ÎÎţ´š ÎÎţ´š ɱý ɱý ççåţ´š 2ñð ñð ƀƀîŕţĥĥðåý¡ ƀƀîŕţĥĥðåý¡');
+			assert.equal(msg.format({ year: 2 }), 'ÎÎţ´š ÎÎţ´š ɱý ɱý ççåţ´š 1šţ šţ ƀƀîŕţĥĥðåý¡ ƀƀîŕţĥĥðåý¡');
 			done();
 		});
 	});

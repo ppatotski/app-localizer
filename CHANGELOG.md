@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.14 (June 5, 2017)
+- Improvement: code coverage
+- Improvement: documentation.
+
 ## 1.1.13 (May 10, 2017)
 - Improvement: added pseudoLocaleName option
 - Issue: generate unnecessary `null` in `{pctBlack, number, null}` for pseudo text.
