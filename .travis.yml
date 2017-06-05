@@ -1,1 +1,9 @@
-after_success: npm run coverage
+sudo: required
+language: node_js
+node_js:
+  - "7"
+install:
+    - npm install
+	- npm install -g gulp
+after_success:
+	- npm run coverage
