@@ -92,7 +92,7 @@ describe('app-localizer', function() {
 			const output = 'Öñ Öñ {takenDate, date, YYYY} {name} ţţööķ ţţööķ {pctBlack, number, percent} ƒƒöŕ ƒƒöŕ {takenDate, time, full} ååñð ååñð {pctBlack, number}';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
 			var msg = new IntlMessageFormat(output);
-			assert.equal(msg.format({ takenDate: new Date('5/6/2017'), name: 'petr', pctBlack: 0.33 }), 'Öñ Öñ 5/6/2017 petr ţţööķ ţţööķ 33% ƒƒöŕ ƒƒöŕ 12:00:00 AM EDT ååñð ååñð 0.33');
+			assert.equal(msg.format({ takenDate: new Date('5/6/2017'), name: 'petr', pctBlack: 0.33 }).replace('GMT', 'EDT'), 'Öñ Öñ 5/6/2017 petr ţţööķ ţţööķ 33% ƒƒöŕ ƒƒöŕ 12:00:00 AM EDT ååñð ååñð 0.33');
 			done();
 		});
 
