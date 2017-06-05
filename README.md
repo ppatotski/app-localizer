@@ -4,7 +4,7 @@ Application Localizer package that helps with localizing applications.
 
 [![NPM version](https://img.shields.io/npm/v/app-localizer.svg)](https://www.npmjs.com/package/app-localizer)
 
-[![Coverage Status](https://coveralls.io/repos/github/ppatotski/app-localizer/badge.svg?branch=improvement/code-coverage)](https://coveralls.io/github/ppatotski/app-localizer?branch=improvement/code-coverage)
+[![Coverage Status](https://coveralls.io/repos/github/ppatotski/app-localizer/badge.svg?branch=master)](https://coveralls.io/github/ppatotski/app-localizer?branch=master)
 
 > uses [Intl MessageFormat Parser](https://github.com/yahoo/intl-messageformat-parser) that parses ICU Message strings into an AST.
 >
