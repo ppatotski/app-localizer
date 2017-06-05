@@ -4,6 +4,8 @@ Application Localizer package that helps with localizing applications.
 
 [![NPM version](https://img.shields.io/npm/v/app-localizer.svg)](https://www.npmjs.com/package/app-localizer)
 
+[![Coverage Status](https://coveralls.io/repos/github/ppatotski/app-localizer/badge.svg?branch=master)](https://coveralls.io/github/ppatotski/app-localizer?branch=master)
+
 > uses [Intl MessageFormat Parser](https://github.com/yahoo/intl-messageformat-parser) that parses ICU Message strings into an AST.
 >
 > tested with [Intl MessageFormat](https://github.com/yahoo/intl-messageformat) that formats ICU Message strings with number, date, plural, and select placeholders to create localized messages.
@@ -34,6 +36,22 @@ Application Localizer package that helps with localizing applications.
 ```shell
 npm install app-localizer
 ```
+
+API Reference
+-------------
+Pseudo locale generator options
+* **expander** Sentence expand factor 0.3 = 30%
+* **wordexpander** Word expand factor 0.5 = 50%
+* **brackets** Enclose sentence in brackets
+* **exclamations** Enclose sentence in exclamations
+* **accents** Convert letter to its accent version
+* **rightToLeft** RTL writing systems
+* **forceException** Force throwing syntax exception if any
+
+Locale validator options
+* **filePathPattern** Locale files path (supports node glob pattern)
+* **multiFile** Each locale is in separate file in the same folder
+* **fileStructure** Structure of locale file content (`polymer` or `angular.flat` file structure)
 
 ## Usage
 
