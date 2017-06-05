@@ -8,7 +8,7 @@
     "coveralls": "latest",
     "eslint": "latest",
     "gulp": "latest",
-    "messageformat-parser": "latest",
+    "intl-messageformat": "latest",
     "mocha": "latest",
     "nyc": "latest",
     "vinyl": "latest"
