@@ -1,6 +1,6 @@
 {
   "name": "app-localizer",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "description": "Application Localizer",
   "jsnext:main": "src/localizer.js",
   "main": "index.js",
@@ -47,5 +47,5 @@
   "bugs": {
     "url": "https://github.com/ppatotski/app-localizer/issues"
   },
-  "homepage": "https://github.com/ppatotski/app-localizer#readme"
+  "homepage": "https://ppatotski.github.io/app-localizer"
 }
