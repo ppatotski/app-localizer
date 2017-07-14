@@ -257,7 +257,7 @@
 
 				for (let index = 0; index < parts.length; index++) {
 					if(!parts[index].token && parts[index].text !== ' ') {
-				// Text part can start or end with space
+						// Text part can start or end with space
 						const startsFromSpace = parts[index].text[0] === ' ';
 						const endsWithSpace = parts[index].text[parts[index].text.length - 1] === ' ';
 

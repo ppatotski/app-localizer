@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.17 (July 14, 2017)
+- Improvement: 100% code coverage
+
 ## 1.1.14 (June 5, 2017)
 - Improvement: code coverage
 - Improvement: documentation.
