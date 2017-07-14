@@ -8,6 +8,7 @@
     "coveralls": "latest",
     "eslint": "latest",
     "gulp": "latest",
+    "gulp-inline-source": "latest",
     "intl-messageformat": "latest",
     "mocha": "latest",
     "nyc": "latest",
@@ -19,7 +20,8 @@
   "scripts": {
     "test": "nyc --reporter=html --reporter=text mocha",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
-    "deploy": "mocha && npm version patch && npm publish"
+    "deploy": "mocha && npm version patch && npm publish",
+    "build": "gulp build"
   },
   "repository": {
     "type": "git",
@@ -45,5 +47,5 @@
   "bugs": {
     "url": "https://github.com/ppatotski/app-localizer/issues"
   },
-  "homepage": "https://github.com/ppatotski/app-localizer#readme"
+  "homepage": "https://ppatotski.github.io/app-localizer"
 }
