@@ -151,9 +151,6 @@ function validateLocales(filePath, options, baseLocale, callback) {
 			let fileCount = files.length;
 			files.forEach(file => {
 				fs.readFile(path.join(filePath, file), (err, buffer) => {
-					if(err) {
-						throw err;
-					}
 					fileCount -= 1;
 					const locale = JSON.parse(buffer);
 					const localeName = noLocaleKey? file.substring(0, file.lastIndexOf('.')) : Object.keys(locale)[0];
@@ -191,14 +188,10 @@ exports.validateLocales = validateLocales;
 function validateMultipleLocales(paths, options, baseLocale, callback) {
 	return Promise.all(
 		// Proceed when all paths (buckets) are processed
-		paths.map((path) => new Promise((resolve, reject) => {
-			try {
-				validateLocales(path, options, baseLocale, (result) => {
-					resolve({ path, result });
-				});
-			} catch (err) {
-				reject(err);
-			}
+		paths.map((path) => new Promise((resolve) => {
+			validateLocales(path, options, baseLocale, (result) => {
+				resolve({ path, result });
+			});
 		}))
 	).then(values => {
 		let overallResult = undefined; // undefined means valid
