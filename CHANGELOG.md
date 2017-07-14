@@ -1,7 +1,7 @@
 # Change Log
 
-## 1.1.16 (June 12, 2017)
-- Feature: web site
+## 1.1.19 (July 14, 2017)
+- Improvement: 100% code coverage
 
 ## 1.1.14 (June 5, 2017)
 - Improvement: code coverage
