@@ -3,8 +3,8 @@ const assert = require('assert');
 const File = require('vinyl');
 const IntlMessageFormat = require( 'intl-messageformat' );
 
-describe('app-localizer', function() {
-	describe('toPseudoText', function() {
+describe('localizer', function() {
+	describe('toPseudoText method with', function() {
 
 		it('mapping', function(done) {
 			const input = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz|~";
@@ -13,72 +13,72 @@ describe('app-localizer', function() {
 			done();
 		});
 
-		it('without options', function(done) {
+		it('no options', function(done) {
 			assert.equal(localizer.toPseudoText('some text'), 'some text');
 			done();
 		});
 
-		it('with expander', function(done) {
+		it('expander', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { expander: 0.2 }), 'some text');
 			done();
 		});
 
-		it('with expander (long)', function(done) {
+		it('expander (long)', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { expander: 0.6 }), 'some some text');
 			done();
 		});
 
-		it('with expander (longest)', function(done) {
+		it('expander (longest)', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { expander: 3 }), 'some some some some text text text text');
 			done();
 		});
 
-		it('with wordexpander', function(done) {
+		it('wordexpander', function(done) {
 			assert.equal(localizer.toPseudoText('me', { wordexpander: 0.2 }), 'me');
 			done();
 		});
 
-		it('with wordexpander (long)', function(done) {
+		it('wordexpander (long)', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { wordexpander: 0.7 }), 'ssoomme tteexxt');
 			done();
 		});
 
-		it('with wordexpander (longest)', function(done) {
+		it('wordexpander (longest)', function(done) {
 			assert.equal(localizer.toPseudoText('some text sometext', { wordexpander: 3 }), 'sssooooommmmmeee ttteeeeexxxxxttt sssooooommmmeeeeetttteeeexxxxxtt');
 			done();
 		});
 
-		it('with accents', function(done) {
+		it('accents', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { accents: true }), 'šöɱé ţéẋţ');
 			done();
 		});
 
-		it('with exclamations', function(done) {
+		it('exclamations', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { exclamations: true }), '!!! some text !!!');
 			done();
 		});
 
-		it('with brackets', function(done) {
+		it('brackets', function(done) {
 			assert.equal(localizer.toPseudoText('some text', { brackets: true }), '[ some text ]');
 			done();
 		});
 
-		it('with rightToLeft token', function(done) {
+		it('rightToLeft token', function(done) {
 			assert.equal(localizer.toPseudoText('some {token} text', { rightToLeft: true }), '\u200F\u202e' + 'some {token} text' + '\u202c\u200F');
 			done();
 		});
 
-		it('with missing close token', function(done) {
+		it('missing close token', function(done) {
 			assert.equal(localizer.toPseudoText('some text {token and {{token}}', { expander: 0.5, accents: true, wordexpander: 0.2 }), 'ššöɱé ššöɱé ţţéẋţ ţţéẋţ {{ţöķéñ ååñð ååñð {{{ţöķķéñ}}');
 			done();
 		});
 
-		it('with missing open token', function(done) {
+		it('missing open token', function(done) {
 			assert.equal(localizer.toPseudoText('some text token} and {{token}} end', { expander: 0.5, accents: true, wordexpander: 0.2 }), 'ššöɱé ššöɱé ţţéẋţ ţţöķéñ} ţţöķéñ} ååñð ååñð {{{ţöķķéñ}} ééñð');
 			done();
 		});
 
-		it('with missing token exception', function(done) {
+		it('missing token exception', function(done) {
 			try {
 				localizer.toPseudoText('some text token} and {{token}} end', { expander: 0.5, accents: true, wordexpander: 0.2, forceException: true });
 			} catch(err) {
@@ -87,7 +87,7 @@ describe('app-localizer', function() {
 			}
 		});
 
-		it('all with tokens Formatted Argument', function(done) {
+		it('tokens Formatted Argument', function(done) {
 			const input = 'On {takenDate, date, YYYY} {name} took {pctBlack, number, percent} for {takenDate, time, full} and {pctBlack, number}';
 			const output = 'Öñ Öñ {takenDate, date, YYYY} {name} ţţööķ ţţööķ {pctBlack, number, percent} ƒƒöŕ ƒƒöŕ {takenDate, time, full} ååñð ååñð {pctBlack, number}';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
@@ -96,7 +96,7 @@ describe('app-localizer', function() {
 			done();
 		});
 
-		it('all with tokens {plural} Format', function(done) {
+		it('tokens {plural} Format', function(done) {
 			const input = 'You have {itemCount, plural, =0 {no items} one {1 item} other {{itemCount} items}}.';
 			const output = 'ÝÝöû ÝÝöû ĥĥåṽé {itemCount, plural, =0 {ñö ñö îîţéɱš} one {① ① îîţéɱ} other {{itemCount} îîţéɱš îîţéɱš}}· ·';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
@@ -105,7 +105,7 @@ describe('app-localizer', function() {
 			done();
 		});
 
-		it('all with tokens {select} Format', function(done) {
+		it('tokens {select} Format', function(done) {
 			const input = '{gender, select, male {He {taxRate, number, percent}} female {She} other {They}} will respond shortly.';
 			const output = '{gender, select, male {Ĥé Ĥé {taxRate, number, percent}} female {ŠŠĥé ŠŠĥé} other {ŢŢĥéý ŢŢĥéý}} ŵŵîļļ ŵŵîļļ ŕŕéšþöñð ŕŕéšþöñð ššĥöŕţţļý·';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
@@ -114,7 +114,7 @@ describe('app-localizer', function() {
 			done();
 		});
 
-		it('all with tokens {selectordinal} Format', function(done) {
+		it('tokens {selectordinal} Format', function(done) {
 			const input = 'It\'s my cat\'s {year, selectordinal, offset:1 one {#st} two {#nd} few {#rd} other {#th}} birthday!';
 			const output = 'ÎÎţ´š ÎÎţ´š ɱý ɱý ççåţ´š {year, selectordinal, offset:1 one {#šţ šţ} two {#ñð ñð} few {#ŕð ŕð} other {#ţĥ ţĥ}} ƀƀîŕţĥĥðåý¡ ƀƀîŕţĥĥðåý¡';
 			assert.equal(localizer.toPseudoText(input, { expander: 0.5, accents: true, wordexpander: 0.2 }), output);
@@ -124,7 +124,7 @@ describe('app-localizer', function() {
 		});
 	});
 
-	describe('pseudoLocalize', function() {
+	describe('pseudoLocalize method with', function() {
 		it('pseudo localize polymer', function(done) {
 			const result = '{\n	"fr-be": {\n		"label1": "sssooommmmee {token1} ttteeexxxxtt {token2}"\n	}\n}';
 			assert.equal(localizer.pseudoLocalizeContent({ wordexpander: 2, pseudoLocaleName: 'fr-be' }, '{ "en-us": { "label1": "some {token1} text {token2}" } }'), result);
@@ -150,16 +150,27 @@ describe('app-localizer', function() {
 				done();
 			});
 		});
+
+		it('empty pseudo localize gulp', function(done) {
+			const localeFile = new File();
+			const localizerPlugin = localizer.pseudoLocalize({ wordexpander: 2 });
+			localizerPlugin.write(localeFile);
+			localizerPlugin.once('data', function(file) {
+				assert.ifError(file.isBuffer());
+				done();
+			});
+		});
 	});
 
-	describe('validateLocales', function() {
+	describe('validateLocales method with', function() {
 		it('validate path', function(done) {
-			const result = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
-			assert.deepEqual(localizer.validateLocalesContent(JSON.parse('{ "en-us": { "label1": "some {token1} text {{token2}}" }, "de-de": { "label2": "some {token1} text {{token2}}" } }')), result);
+			const result = { "en-us": { "label1": [ "de-de", "be-by" ], "label3": [ "de-de", "be-by" ] }, "be-by": { "label2": [ "en-us" ] }, "de-de": { "label2": [ "en-us" ] } };
+			const input = '{ "en-us": { "label1": "some {token1} text {{token2}}", "label3": "some {token1} text {{token2}}" }, "de-de": { "label2": "some {token1} text {{token2}}" }, "be-by": { "label2": "some {token1} text {{token2}}" } }';
+			assert.deepEqual(localizer.validateLocalesContent(JSON.parse(input)), result);
 			done();
 		});
 
-		it('validate path (single file)', function(done) {
+		it('single file', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
 			localizer.validateLocales('locales/test1/en-us.json', { multiFile: false }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
@@ -167,7 +178,17 @@ describe('app-localizer', function() {
 			});
 		});
 
-		it('validate path (polymer multi-file)', function(done) {
+		it('missing file', function(done) {
+			assert.doesNotThrow( () => {
+				localizer.validateLocales('locales/test1/en-us_missing.json', { multiFile: false }, undefined, () => {
+				});
+				localizer.validateLocales('locales/test_missing/', { multiFile: true }, undefined, () => {
+				});
+			});
+			done();
+		});
+
+		it('polymer multi-file', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
 			localizer.validateLocales('locales/test2/', { multiFile: true }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
@@ -175,7 +196,7 @@ describe('app-localizer', function() {
 			});
 		});
 
-		it('validate path with base (polymer multi-file)', function(done) {
+		it('base (polymer multi-file)', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] } };
 			localizer.validateLocales('locales/test2/', { multiFile: true }, { "en-us": { "label1": "some text" } }, (result) => {
 				assert.deepEqual(result, expectedResult);
@@ -183,7 +204,7 @@ describe('app-localizer', function() {
 			});
 		});
 
-		it('validate path (angular.flat multi-file)', function(done) {
+		it('angular.flat multi-file', function(done) {
 			const expectedResult = { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } };
 			localizer.validateLocales('locales/test3/', { multiFile: true, fileStructure: 'angular.flat' }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
@@ -191,10 +212,26 @@ describe('app-localizer', function() {
 			});
 		});
 
-		it('validate path multi path (angular.flat multi-file)', function(done) {
+		it('multi path (angular.flat multi-file)', function(done) {
 			const expectedResult = { "locales/test3/": { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } }, "locales/test4/": { "en-us": { "label3": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } } };
 			localizer.validateMultipleLocales([ 'locales/test3/', 'locales/test4/' ], { multiFile: true, fileStructure: 'angular.flat' }, undefined, (result) => {
 				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
+
+		it('promise multi path (angular.flat multi-file)', function(done) {
+			const expectedResult = { "locales/test3/": { "en-us": { "label1": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } }, "locales/test4/": { "en-us": { "label3": [ "de-de" ] }, "de-de": { "label2": [ "en-us" ] } } };
+			const promise = localizer.validateMultipleLocales([ 'locales/test3/', 'locales/test4/' ], { multiFile: true, fileStructure: 'angular.flat' });
+			promise.catch((result) => {
+				assert.deepEqual(result, expectedResult);
+				done();
+			});
+		});
+
+		it('promise multi path valid (angular.flat multi-file)', function(done) {
+			const promise = localizer.validateMultipleLocales([ 'locales/test5/', 'locales/test5/' ], { multiFile: true, fileStructure: 'angular.flat' });
+			promise.then(() => {
 				done();
 			});
 		});

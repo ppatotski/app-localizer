@@ -1,4 +1,5 @@
 {
+	"skipErrorMessage": true,
 	"commands": [
 		{
 			"text": "Test Localizer",
