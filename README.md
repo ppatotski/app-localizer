@@ -1,6 +1,8 @@
 # Application Localizer
 
-Application Localizer package that helps with localizing applications ([Website](https://ppatotski.github.io/app-localizer/))
+Application Localizer package that helps with localizing applications
+
+[Pseudo Locale Generator Web Site](https://ppatotski.github.io/app-localizer/)
 
 [![NPM version](https://img.shields.io/npm/v/app-localizer.svg)](https://www.npmjs.com/package/app-localizer)
 [![Build Status](https://travis-ci.org/ppatotski/app-localizer.svg?branch=master)](https://travis-ci.org/ppatotski/app-localizer)
