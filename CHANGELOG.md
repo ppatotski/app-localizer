@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.2.0 (Aug 3, 2017)
+- Improvement: Support pseudo generating off json content for web site
+
 ## 1.1.19 (July 14, 2017)
 - Improvement: 100% code coverage
 
