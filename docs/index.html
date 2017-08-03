@@ -238,6 +238,16 @@
 						<input id="word" type="number" style="text-align: right;" min="0" onchange="updateSettings()">
 						<label for="word"> % Longer word</label>
 					</li>
+					<li>
+					</li>
+					<li>
+						<input id="modeText" type="radio" name="mode" style="text-align: right;" value="text" onchange="updateSettings()">
+						<label for="modeText"> Text</label>
+						<input id="modePolymerJSON" type="radio" name="mode" style="text-align: right;" value="polymer" onchange="updateSettings()">
+						<label for="modePolymerJSON"> Polymer JSON</label>
+						<input id="modeAngularJSON" type="radio" name="mode" style="text-align: right;" value="angular.flat" onchange="updateSettings()">
+						<label for="modeAngularJSON"> Angular JSON (flat)</label>
+					</li>
 				</ul>
 			</li>
 		</ul>
@@ -1923,7 +1933,7 @@
 
 				for (let index = 0; index < parts.length; index++) {
 					if(!parts[index].token && parts[index].text !== ' ') {
-				// Text part can start or end with space
+						// Text part can start or end with space
 						const startsFromSpace = parts[index].text[0] === ' ';
 						const endsWithSpace = parts[index].text[parts[index].text.length - 1] === ' ';
 
@@ -1952,8 +1962,38 @@
 			}
 			return result;
 		};
+
+		/**
+		 * Generates pseudo locale.
+		 *
+		 * @param {PseudoLocalizerOptions} options Generator options.
+		 * @param {string} text Input json file content.
+		 * @returns {string} Pseudo generated json content.
+		 */
+		function pseudoLocalizeContent(options, text, messageParser) {
+			let locale = JSON.parse(text);
+			const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
+			const transformed = {};
+
+			if (localename) {
+				locale = locale[localename];
+			}
+
+			Object.keys(locale).forEach((key) => {
+				transformed[key] = toPseudoText(locale[key], options, messageParser);
+			} );
+
+			let result = transformed;
+			if (localename) {
+				result = {};
+				result[options.pseudoLocaleName ? options.pseudoLocaleName : 'pseudo'] = transformed;
+			}
+
+			return JSON.stringify( result, null, '\t' );
+		};
 		return {
-			toPseudoText: toPseudoText
+			toPseudoText: toPseudoText,
+			pseudoLocalizeContent: pseudoLocalizeContent
 		};
 	})();
 
@@ -1972,6 +2012,7 @@
 			localStorage.setItem('exception', document.getElementById('exception').checked);
 			localStorage.setItem('sentence', document.getElementById('sentence').value);
 			localStorage.setItem('word', document.getElementById('word').value);
+			localStorage.setItem('mode', document.querySelector('input[name="mode"]:checked').value);
 			transform();
 		}
 
@@ -1983,9 +2024,13 @@
 			document.getElementById('exception').checked = localStorage.getItem('exception') === 'true';
 			document.getElementById('sentence').value = localStorage.getItem('sentence');
 			document.getElementById('word').value = localStorage.getItem('word');
+			document.getElementById('modeText').checked = localStorage.getItem('mode') !== 'polymer' && localStorage.getItem('mode') !== 'angular.flat';
+			document.getElementById('modePolymerJSON').checked = localStorage.getItem('mode') === 'polymer';
+			document.getElementById('modeAngularJSON').checked = localStorage.getItem('mode') === 'angular.flat';
 		}
 
 		function toPseudoText(text) {
+			const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
 			const options = {
 				expander: localStorage.getItem('sentence') / 100,
 				accents: localStorage.getItem('accents') === 'true',
@@ -1993,25 +2038,37 @@
 				exclamations: localStorage.getItem('exclamations') === 'true',
 				brackets: localStorage.getItem('brackets') === 'true',
 				forceException: localStorage.getItem('exception') === 'true',
-				wordexpander: localStorage.getItem('word') / 100
+				wordexpander: localStorage.getItem('word') / 100,
+				format: localStorage.getItem('mode'),
+				pseudoLocaleName: 'en-us',
 			};
-			return AppLocalizer.toPseudoText(text, options, IntlMessageFormatParser);
+			return jsonMode ? AppLocalizer.pseudoLocalizeContent(options, text, IntlMessageFormatParser) : AppLocalizer.toPseudoText(text, options, IntlMessageFormatParser);
 		}
 
 		function transform() {
+			updatePlaceholder();
 			outputElement.value = toPseudoText(inputElement.value || inputElement.placeholder);
 		}
 
 		function updatePlaceholder() {
+			const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
+			const angularFormat = localStorage.getItem('mode') === 'angular.flat';
 			const placeholder = `It's my cat's {year, selectordinal,
 	one {#st}
 	two {#nd}
 	few {#rd}
 	other {#th}
 } birthday!`;
-
-			inputElement.placeholder = placeholder;
-			outputElement.value = toPseudoText(placeholder);
+			const placeholderJSON = `{
+	"en-us": {
+		"label1": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+	}
+}`;
+			const placeholderAngular = `{
+	"label1": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
+}`;
+			inputElement.placeholder = jsonMode? angularFormat? placeholderAngular : placeholderJSON : placeholder;
+			outputElement.value = toPseudoText(inputElement.placeholder);
 		}
 
 		inputElement.addEventListener('keyup', transform);

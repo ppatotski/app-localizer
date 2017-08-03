@@ -51,25 +51,7 @@ exports.toPseudoText = toPseudoText;
  * @returns {string} Pseudo generated json content.
  */
 function pseudoLocalizeContent(options, text) {
-	let locale = JSON.parse(text);
-	const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
-	const transformed = {};
-
-	if (localename) {
-		locale = locale[localename];
-	}
-
-	Object.keys(locale).forEach((key) => {
-		transformed[key] = toPseudoText(locale[key], options);
-	} );
-
-	let result = transformed;
-	if (localename) {
-		result = {};
-		result[options.pseudoLocaleName ? options.pseudoLocaleName : 'pseudo'] = transformed;
-	}
-
-	return JSON.stringify( result, null, '\t' );
+	return localizer.pseudoLocalizeContent(options, text, messageParser);
 };
 
 exports.pseudoLocalizeContent = pseudoLocalizeContent;

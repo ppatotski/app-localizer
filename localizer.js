@@ -286,8 +286,38 @@
 			}
 			return result;
 		};
+
+		/**
+		 * Generates pseudo locale.
+		 *
+		 * @param {PseudoLocalizerOptions} options Generator options.
+		 * @param {string} text Input json file content.
+		 * @returns {string} Pseudo generated json content.
+		 */
+		function pseudoLocalizeContent(options, text, messageParser) {
+			let locale = JSON.parse(text);
+			const localename = options.format === 'angular.flat' ? '' : Object.keys(locale)[ 0 ];
+			const transformed = {};
+
+			if (localename) {
+				locale = locale[localename];
+			}
+
+			Object.keys(locale).forEach((key) => {
+				transformed[key] = toPseudoText(locale[key], options, messageParser);
+			} );
+
+			let result = transformed;
+			if (localename) {
+				result = {};
+				result[options.pseudoLocaleName ? options.pseudoLocaleName : 'pseudo'] = transformed;
+			}
+
+			return JSON.stringify( result, null, '\t' );
+		};
 		return {
-			toPseudoText: toPseudoText
+			toPseudoText: toPseudoText,
+			pseudoLocalizeContent: pseudoLocalizeContent
 		};
 	})();
 
