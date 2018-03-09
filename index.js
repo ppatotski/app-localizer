@@ -1,8 +1,8 @@
-const Transform = require( 'stream' ).Transform;
-const fs = require( 'fs' );
-const path = require( 'path' );
-const messageParser = require( 'intl-messageformat-parser' );
-const localizer = require( './localizer.js' ).AppLocalizer;
+const Transform = require("stream").Transform;
+const fs = require("fs");
+const path = require("path");
+const messageParser = require("intl-messageformat-parser");
+const localizer = require("./localizer.js").AppLocalizer;
 
 /**
  * @typedef GeneratorOptions
@@ -28,7 +28,7 @@ const localizer = require( './localizer.js' ).AppLocalizer;
  * @typedef ValidateOptions
  * @property {boolean} multiFile Locale is localed in separate file.
  * @property {string} fileStructure Structure of locale file content (polymer, angular.flat).
-*/
+ */
 
 /**
  * Generates pseudo text.
@@ -39,7 +39,7 @@ const localizer = require( './localizer.js' ).AppLocalizer;
  */
 function toPseudoText(text, options) {
 	return localizer.toPseudoText(text, options, messageParser);
-};
+}
 
 exports.toPseudoText = toPseudoText;
 
@@ -52,7 +52,7 @@ exports.toPseudoText = toPseudoText;
  */
 function pseudoLocalizeContent(options, text) {
 	return localizer.pseudoLocalizeContent(options, text, messageParser);
-};
+}
 
 exports.pseudoLocalizeContent = pseudoLocalizeContent;
 
@@ -73,7 +73,7 @@ function pseudoLocalize(options) {
 			return callback(null, file);
 		}
 	});
-};
+}
 
 exports.pseudoLocalize = pseudoLocalize;
 
@@ -87,29 +87,35 @@ exports.pseudoLocalize = pseudoLocalize;
  */
 function validateLocalesContent(locales, baseLocale) {
 	let result = undefined;
-	if(!baseLocale) {
+	if (!baseLocale) {
 		baseLocale = locales;
 	}
-	Object.keys(baseLocale).forEach((localeName) => {
-		Object.keys(baseLocale[localeName]).forEach((label) => {
-			Object.keys(locales).filter(key => key !== localeName).forEach((otherLocaleName) => {
-				if(!Object.keys(locales[otherLocaleName]).some(otherLabel => otherLabel === label)) {
-					if(!result) {
-						result = {};
+	Object.keys(baseLocale).forEach(localeName => {
+		Object.keys(baseLocale[localeName]).forEach(label => {
+			Object.keys(locales)
+				.filter(key => key !== localeName)
+				.forEach(otherLocaleName => {
+					if (
+						!Object.keys(locales[otherLocaleName]).some(
+							otherLabel => otherLabel === label
+						)
+					) {
+						if (!result) {
+							result = {};
+						}
+						if (!result[localeName]) {
+							result[localeName] = {};
+						}
+						if (!result[localeName][label]) {
+							result[localeName][label] = [];
+						}
+						result[localeName][label].push(otherLocaleName);
 					}
-					if(!result[localeName]) {
-						result[localeName] = {};
-					}
-					if(!result[localeName][label]) {
-						result[localeName][label] = [];
-					}
-					result[localeName][label].push(otherLocaleName);
-				}
-			});
+				});
 		});
 	});
 	return result;
-};
+}
 
 exports.validateLocalesContent = validateLocalesContent;
 
@@ -123,37 +129,46 @@ exports.validateLocalesContent = validateLocalesContent;
  * @param {function} callback Function callback with result of errors as a first parameter (result is undefined in case of success).
  */
 function validateLocales(filePath, options, baseLocale, callback) {
-	if(options.multiFile) {
+	if (options.multiFile) {
 		fs.readdir(filePath, (err, files) => {
-			if(err) {
-				throw err;
-			}
-			const noLocaleKey = options.fileStructure === 'angular.flat';
-			const locales = {};
-			let fileCount = files.length;
-			files.forEach(file => {
-				fs.readFile(path.join(filePath, file), (err, buffer) => {
-					fileCount -= 1;
-					const locale = JSON.parse(buffer);
-					const localeName = noLocaleKey? file.substring(0, file.lastIndexOf('.')) : Object.keys(locale)[0];
-					locales[localeName] = noLocaleKey? locale : locale[localeName];
-					if(!fileCount) {
-						const result = validateLocalesContent(locales, baseLocale);
-						callback(result);
-					}
+			if (err) {
+				console.error(err);
+				callback();
+			} else {
+				const noLocaleKey = options.fileStructure === "angular.flat";
+				const locales = {};
+				let fileCount = files.length;
+				files.forEach(file => {
+					fs.readFile(path.join(filePath, file), (err, buffer) => {
+						fileCount -= 1;
+						const locale = JSON.parse(buffer);
+						const localeName = noLocaleKey
+							? file.substring(0, file.lastIndexOf("."))
+							: Object.keys(locale)[0];
+						locales[localeName] = noLocaleKey ? locale : locale[localeName];
+						if (!fileCount) {
+							const result = validateLocalesContent(
+								locales,
+								noLocaleKey && baseLocale ? { base: baseLocale } : baseLocale
+							);
+							callback(result);
+						}
+					});
 				});
-			});
+			}
 		});
 	} else {
 		fs.readFile(filePath, (err, buffer) => {
-			if(err) {
-				throw err;
+			if (err) {
+				console.error(err);
+				callback();
+			} else {
+				const result = validateLocalesContent(JSON.parse(buffer));
+				callback(result);
 			}
-			const result = validateLocalesContent(JSON.parse(buffer));
-			callback(result);
 		});
 	}
-};
+}
 
 exports.validateLocales = validateLocales;
 
@@ -170,31 +185,34 @@ exports.validateLocales = validateLocales;
 function validateMultipleLocales(paths, options, baseLocale, callback) {
 	return Promise.all(
 		// Proceed when all paths (buckets) are processed
-		paths.map((path) => new Promise((resolve) => {
-			validateLocales(path, options, baseLocale, (result) => {
-				resolve({ path, result });
-			});
-		}))
+		paths.map(
+			path =>
+				new Promise(resolve => {
+					validateLocales(path, options, baseLocale, result => {
+						resolve({ path, result });
+					});
+				})
+		)
 	).then(values => {
 		let overallResult = undefined; // undefined means valid
-		values.forEach((value) => {
-			if(value.result) {
-				if(!overallResult) {
+		values.forEach(value => {
+			if (value.result) {
+				if (!overallResult) {
 					overallResult = {};
 				}
 				// result per path (bucket)
 				overallResult[value.path] = value.result;
 			}
 		});
-		if(callback) {
+		if (callback) {
 			callback(overallResult);
 		} else {
-			if(overallResult) {
+			if (overallResult) {
 				// last chance to say that locales are not valid
 				throw overallResult;
 			}
 		}
 	});
-};
+}
 
 exports.validateMultipleLocales = validateMultipleLocales;
