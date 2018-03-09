@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.2.1 (March 9, 2018)
+## 1.2.2 (March 9, 2018)
 
 * Issue: angular.flat vscode base local handling issue fix
 
