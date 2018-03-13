@@ -1,352 +1,366 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Application Localizer that helps with localizing applications">
-    <title>Application Localizer</title>
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115651167-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-		html {
-			font: normal 20px sans-serif;
-			color: #555;
-		}
+    gtag('config', 'UA-115651167-1');
+  </script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Application Localizer that helps with localizing applications">
+  <title>Application Localizer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-		body {
-			display: flex;
-			flex-direction: column;
-			min-height: 100vh;
-		}
+    html {
+      font: normal 20px sans-serif;
+      color: #555;
+    }
 
-		ul {
-			list-style: none;
-		}
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
 
-		a {
-			text-decoration: none;
-			color: inherit;
-			cursor: pointer;
+    ul {
+      list-style: none;
+    }
 
-			opacity: 0.8;
-		}
+    a {
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
 
-		a:hover {
-			opacity: 1;
-		}
+      opacity: 0.8;
+    }
 
-		hr {
-			width: 150px;
-			height: 2px;
-			background-color: #555;
-			border: 0;
-			margin-bottom: 80px;
-		}
+    a:hover {
+      opacity: 1;
+    }
 
-		textarea {
-			width: 100%;
-			height: 200px;
-		}
+    hr {
+      width: 150px;
+      height: 2px;
+      background-color: #555;
+      border: 0;
+      margin-bottom: 80px;
+    }
 
-		section {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
+    textarea {
+      width: 100%;
+      height: 200px;
+    }
 
-			padding: 125px 100px;
-		}
+    section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-		@media (max-width: 992px){
+      padding: 125px 100px;
+    }
 
-			section {
-				padding: 100px 30px;
-			}
+    @media (max-width: 992px) {
 
-		}
+      section {
+        padding: 100px 30px;
+      }
 
-		section h3.title {
-			color: #414a4f;
-			text-transform: capitalize;
-			font: bold 32px 'Open Sans', sans-serif;
-			margin-bottom: 35px;
-			text-align: center;
-		}
+    }
 
-		section p {
-			max-width: 800px;
-			text-align: center;
-			margin-bottom: 35px;
-			padding: 0 20px;
-			line-height: 2;
-		}
+    section h3.title {
+      color: #414a4f;
+      text-transform: capitalize;
+      font: bold 32px 'Open Sans', sans-serif;
+      margin-bottom: 35px;
+      text-align: center;
+    }
 
-		ul.flex-ul {
-			width: 100%;
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-		}
+    section p {
+      max-width: 800px;
+      text-align: center;
+      margin-bottom: 35px;
+      padding: 0 20px;
+      line-height: 2;
+    }
 
-		header {
-			background-color: rgb(209, 220, 240);
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 10;
-			width: 100%;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			color: #333;
-			padding: 20px 100px;
-		}
+    ul.flex-ul {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
-		header h2 {
-			display: flex;
-		}
+    header {
+      background-color: rgb(209, 220, 240);
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #333;
+      padding: 20px 100px;
+    }
 
-		@media (max-width: 992px) {
-			header {
-				flex-direction: column;
-				padding: 20px 50px;
-			}
+    header h2 {
+      display: flex;
+    }
 
-			header span {
-				display: none;
-			}
-		}
+    @media (max-width: 992px) {
+      header {
+        flex-direction: column;
+        padding: 20px 50px;
+      }
 
-		.content-section {
-			background-color: #fff;
-			display: flex;
-			flex: 1;
-		}
+      header span {
+        display: none;
+      }
+    }
 
-		.content-section .flex-ul li {
-			padding: 15px;
-			border-radius: 3px;
+    .content-section {
+      background-color: #fff;
+      display: flex;
+      flex: 1;
+    }
 
-			background-clip: content-box;
-			background-size: cover;
-			background-position: center;
-		}
+    .content-section .flex-ul li {
+      padding: 15px;
+      border-radius: 3px;
 
-		.content-section .flex-ul li.quarter {
-			flex-basis: 25%;
-		}
+      background-clip: content-box;
+      background-size: cover;
+      background-position: center;
+    }
 
-		.content-section .flex-ul li.half {
-			flex-basis: 50%;
-		}
+    .content-section .flex-ul li.quarter {
+      flex-basis: 25%;
+    }
+
+    .content-section .flex-ul li.half {
+      flex-basis: 50%;
+    }
 
 
-		@media (max-width: 992px) {
+    @media (max-width: 992px) {
 
-			.content-section .flex-ul li.quarter,
-			.content-section .flex-ul li.half {
-				flex-basis: 100%;
-			}
+      .content-section .flex-ul li.quarter,
+      .content-section .flex-ul li.half {
+        flex-basis: 100%;
+      }
 
-		}
+    }
 
-		footer {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			text-align: center;
-			color: #fff;
-			background-color: #4f4f4f;
-			padding: 20px 0;
-		}
+    footer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      background-color: #4f4f4f;
+      padding: 20px 0;
+    }
 
-		footer p {
-			font-size: 14px;
-			color: #AAA;
-			margin-bottom: 10px;
-		}
+    footer p {
+      font-size: 14px;
+      color: #AAA;
+      margin-bottom: 10px;
+    }
 
-		footer p a {
-			color: #fff;
-		}
+    footer p a {
+      color: #fff;
+    }
 
-		@media (max-width: 992px){
-			footer {
-				padding: 20px 15px;
-			}
+    @media (max-width: 992px) {
+      footer {
+        padding: 20px 15px;
+      }
 
-		}
-	</style>
+    }
+  </style>
 </head>
 
 <body>
-	<header>
-		<h2>
-			<div style="width: 32px;height: 32px;">
-				<svg viewbox="0 0 128 128">
-					<ellipse rx="11" ry="40" cx="60" cy="60" fill="#73C097" transform="rotate(-4 16 132)"/>
-					<ellipse rx="12" ry="44" cx="60" cy="60" fill="#6E9AB1" transform="rotate(10 16 132)" />
-					<ellipse rx="8" ry="8" cx="44" cy="100" fill="#4B5291" transform="rotate(10 16 132)" />
-				</svg>
-			</div>
-			<a href="#">Web Localizer</a>
-			<span style="margin: 0 10px; font-size:20px">powered by <a href="https://www.npmjs.com/package/app-localizer">app-localizer</a></span>
-		</h2>
-	</header>
+  <header>
+    <h2>
+      <div style="width: 32px;height: 32px;">
+        <svg viewbox="0 0 128 128">
+          <ellipse rx="11" ry="40" cx="60" cy="60" fill="#73C097" transform="rotate(-4 16 132)" />
+          <ellipse rx="12" ry="44" cx="60" cy="60" fill="#6E9AB1" transform="rotate(10 16 132)" />
+          <ellipse rx="8" ry="8" cx="44" cy="100" fill="#4B5291" transform="rotate(10 16 132)" />
+        </svg>
+      </div>
+      <a href="#">Web Localizer</a>
+      <span style="margin: 0 10px; font-size:20px">powered by
+        <a href="https://www.npmjs.com/package/app-localizer">app-localizer</a>
+      </span>
+    </h2>
+  </header>
 
 
-	<section class="content-section">
-		<h3 class="title">Pseudo Text Generator</h3>
-		<p>Generate text into pseudo text. (Support <a href="https://formatjs.io/guides/message-syntax/">ICU Message syntax</a>)</p>
-		<hr>
-		<ul class="flex-ul">
-			<li class="half">
-				<ul>
-					<li>
-						<input id="accents" type="checkbox" onchange="updateSettings()">
-						<label for="accents">Accents on letters</label>
-					</li>
-					<li>
-						<input id="right-to-left" type="checkbox" onchange="updateSettings()">
-						<label for="right-to-left">Right-to-Left</label>
-					</li>
-					<li>
-						<input id="exclamations" type="checkbox" onchange="updateSettings()">
-						<label for="exclamations">Exclamations</label>
-					</li>
-					<li>
-						<input id="brackets" type="checkbox" onchange="updateSettings()">
-						<label for="brackets">Brackets</label>
-					</li>
-					<li>
-						<input id="exception" type="checkbox" onchange="updateSettings()">
-						<label for="exception">Force Exception</label>
-					</li>
-				</ul>
-			</li>
-			<li class="half">
-				<ul>
-					<li>
-						<input id="sentence" type="number" min="0" style="text-align: right;" onchange="updateSettings()">
-						<label for="sentence"> % Longer sentence</label>
-					</li>
-					<li>
-						<input id="word" type="number" style="text-align: right;" min="0" onchange="updateSettings()">
-						<label for="word"> % Longer word</label>
-					</li>
-					<li>
-					</li>
-					<li>
-						<input id="modeText" type="radio" name="mode" style="text-align: right;" value="text" onchange="updateSettings()">
-						<label for="modeText"> Text</label>
-						<input id="modePolymerJSON" type="radio" name="mode" style="text-align: right;" value="polymer" onchange="updateSettings()">
-						<label for="modePolymerJSON"> Polymer JSON</label>
-						<input id="modeAngularJSON" type="radio" name="mode" style="text-align: right;" value="angular.flat" onchange="updateSettings()">
-						<label for="modeAngularJSON"> Angular JSON (flat)</label>
-					</li>
-				</ul>
-			</li>
-		</ul>
+  <section class="content-section">
+    <h3 class="title">Pseudo Text Generator</h3>
+    <p>Generate text into pseudo text. (Support
+      <a href="https://formatjs.io/guides/message-syntax/">ICU Message syntax</a>)</p>
+    <hr>
+    <ul class="flex-ul">
+      <li class="half">
+        <ul>
+          <li>
+            <input id="accents" type="checkbox" onchange="updateSettings()">
+            <label for="accents">Accents on letters</label>
+          </li>
+          <li>
+            <input id="right-to-left" type="checkbox" onchange="updateSettings()">
+            <label for="right-to-left">Right-to-Left</label>
+          </li>
+          <li>
+            <input id="exclamations" type="checkbox" onchange="updateSettings()">
+            <label for="exclamations">Exclamations</label>
+          </li>
+          <li>
+            <input id="brackets" type="checkbox" onchange="updateSettings()">
+            <label for="brackets">Brackets</label>
+          </li>
+          <li>
+            <input id="exception" type="checkbox" onchange="updateSettings()">
+            <label for="exception">Force Exception</label>
+          </li>
+        </ul>
+      </li>
+      <li class="half">
+        <ul>
+          <li>
+            <input id="sentence" type="number" min="0" style="text-align: right;" onchange="updateSettings()">
+            <label for="sentence"> % Longer sentence</label>
+          </li>
+          <li>
+            <input id="word" type="number" style="text-align: right;" min="0" onchange="updateSettings()">
+            <label for="word"> % Longer word</label>
+          </li>
+          <li>
+          </li>
+          <li>
+            <input id="modeText" type="radio" name="mode" style="text-align: right;" value="text" onchange="updateSettings()">
+            <label for="modeText"> Text</label>
+            <input id="modePolymerJSON" type="radio" name="mode" style="text-align: right;" value="polymer" onchange="updateSettings()">
+            <label for="modePolymerJSON"> Polymer JSON</label>
+            <input id="modeAngularJSON" type="radio" name="mode" style="text-align: right;" value="angular.flat" onchange="updateSettings()">
+            <label for="modeAngularJSON"> Angular JSON (flat)</label>
+          </li>
+        </ul>
+      </li>
+    </ul>
 
-		<ul class="flex-ul">
-			<li class="half">
-				<h4>Input</h4>
-				<textarea id="input"></textarea>
-			</li>
-			<li class="half">
-				<h4>Output</h4>
-				<textarea id="output" readonly></textarea>
-			</li>
-		</ul>
-	</section>
+    <ul class="flex-ul">
+      <li class="half">
+        <h4>Input</h4>
+        <textarea id="input"></textarea>
+      </li>
+      <li class="half">
+        <h4>Output</h4>
+        <textarea id="output" readonly></textarea>
+      </li>
+    </ul>
+  </section>
 
 
-	<footer>
-		<p>Copyright 2017 <a href="https://github.com/ppatotski/app-localizer">github.com</a> - All Rights Reserved.</p>
-	</footer>
+  <footer>
+    <p>Copyright 2018
+      <a href="https://github.com/ppatotski/app-localizer">github.com</a> - All Rights Reserved.</p>
+  </footer>
 
-	<script type="text/javascript" src="../node_modules/intl-messageformat-parser/dist/parser.js" inline></script>
-	<script type="text/javascript" src="../localizer.js" inline></script>
-	<script type="text/javascript">
-		'use strict';
-		const inputElement = document.getElementById('input');
-		const outputElement = document.getElementById('output');
+  <script type="text/javascript" src="../node_modules/intl-messageformat-parser/dist/parser.js" inline></script>
+  <script type="text/javascript" src="../localizer.js" inline></script>
+  <script type="text/javascript">
+    'use strict';
+    const inputElement = document.getElementById('input');
+    const outputElement = document.getElementById('output');
 
-		function updateSettings() {
-			localStorage.setItem('accents', document.getElementById('accents').checked);
-			localStorage.setItem('right-to-left', document.getElementById('right-to-left').checked);
-			localStorage.setItem('exclamations', document.getElementById('exclamations').checked);
-			localStorage.setItem('brackets', document.getElementById('brackets').checked);
-			localStorage.setItem('exception', document.getElementById('exception').checked);
-			localStorage.setItem('sentence', document.getElementById('sentence').value);
-			localStorage.setItem('word', document.getElementById('word').value);
-			localStorage.setItem('mode', document.querySelector('input[name="mode"]:checked').value);
-			transform();
-		}
+    function updateSettings() {
+      localStorage.setItem('accents', document.getElementById('accents').checked);
+      localStorage.setItem('right-to-left', document.getElementById('right-to-left').checked);
+      localStorage.setItem('exclamations', document.getElementById('exclamations').checked);
+      localStorage.setItem('brackets', document.getElementById('brackets').checked);
+      localStorage.setItem('exception', document.getElementById('exception').checked);
+      localStorage.setItem('sentence', document.getElementById('sentence').value);
+      localStorage.setItem('word', document.getElementById('word').value);
+      localStorage.setItem('mode', document.querySelector('input[name="mode"]:checked').value);
+      transform();
+    }
 
-		function loadSettings() {
-			document.getElementById('accents').checked = localStorage.getItem('accents') === 'true';
-			document.getElementById('right-to-left').checked = localStorage.getItem('right-to-left') === 'true';
-			document.getElementById('exclamations').checked = localStorage.getItem('exclamations') === 'true';
-			document.getElementById('brackets').checked = localStorage.getItem('brackets') === 'true';
-			document.getElementById('exception').checked = localStorage.getItem('exception') === 'true';
-			document.getElementById('sentence').value = localStorage.getItem('sentence');
-			document.getElementById('word').value = localStorage.getItem('word');
-			document.getElementById('modeText').checked = localStorage.getItem('mode') !== 'polymer' && localStorage.getItem('mode') !== 'angular.flat';
-			document.getElementById('modePolymerJSON').checked = localStorage.getItem('mode') === 'polymer';
-			document.getElementById('modeAngularJSON').checked = localStorage.getItem('mode') === 'angular.flat';
-		}
+    function loadSettings() {
+      document.getElementById('accents').checked = localStorage.getItem('accents') === 'true';
+      document.getElementById('right-to-left').checked = localStorage.getItem('right-to-left') === 'true';
+      document.getElementById('exclamations').checked = localStorage.getItem('exclamations') === 'true';
+      document.getElementById('brackets').checked = localStorage.getItem('brackets') === 'true';
+      document.getElementById('exception').checked = localStorage.getItem('exception') === 'true';
+      document.getElementById('sentence').value = localStorage.getItem('sentence');
+      document.getElementById('word').value = localStorage.getItem('word');
+      document.getElementById('modeText').checked = localStorage.getItem('mode') !== 'polymer' && localStorage.getItem('mode') !== 'angular.flat';
+      document.getElementById('modePolymerJSON').checked = localStorage.getItem('mode') === 'polymer';
+      document.getElementById('modeAngularJSON').checked = localStorage.getItem('mode') === 'angular.flat';
+    }
 
-		function toPseudoText(text) {
-			const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
-			const options = {
-				expander: localStorage.getItem('sentence') / 100,
-				accents: localStorage.getItem('accents') === 'true',
-				rightToLeft: localStorage.getItem('right-to-left') === 'true',
-				exclamations: localStorage.getItem('exclamations') === 'true',
-				brackets: localStorage.getItem('brackets') === 'true',
-				forceException: localStorage.getItem('exception') === 'true',
-				wordexpander: localStorage.getItem('word') / 100,
-				format: localStorage.getItem('mode'),
-				pseudoLocaleName: 'en-us',
-			};
-			return jsonMode ? AppLocalizer.pseudoLocalizeContent(options, text, IntlMessageFormatParser) : AppLocalizer.toPseudoText(text, options, IntlMessageFormatParser);
-		}
+    function toPseudoText(text) {
+      const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
+      const options = {
+        expander: localStorage.getItem('sentence') / 100,
+        accents: localStorage.getItem('accents') === 'true',
+        rightToLeft: localStorage.getItem('right-to-left') === 'true',
+        exclamations: localStorage.getItem('exclamations') === 'true',
+        brackets: localStorage.getItem('brackets') === 'true',
+        forceException: localStorage.getItem('exception') === 'true',
+        wordexpander: localStorage.getItem('word') / 100,
+        format: localStorage.getItem('mode'),
+        pseudoLocaleName: 'en-us',
+      };
+      return jsonMode ? AppLocalizer.pseudoLocalizeContent(options, text, IntlMessageFormatParser) : AppLocalizer.toPseudoText(text, options, IntlMessageFormatParser);
+    }
 
-		function transform() {
-			updatePlaceholder();
-			outputElement.value = toPseudoText(inputElement.value || inputElement.placeholder);
-		}
+    function transform() {
+      updatePlaceholder();
+      outputElement.value = toPseudoText(inputElement.value || inputElement.placeholder);
+    }
 
-		function updatePlaceholder() {
-			const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
-			const angularFormat = localStorage.getItem('mode') === 'angular.flat';
-			const placeholder = `It's my cat's {year, selectordinal,
+    function updatePlaceholder() {
+      const jsonMode = localStorage.getItem('mode') === 'polymer' || localStorage.getItem('mode') === 'angular.flat';
+      const angularFormat = localStorage.getItem('mode') === 'angular.flat';
+      const placeholder = `It's my cat's {year, selectordinal,
 	one {#st}
 	two {#nd}
 	few {#rd}
 	other {#th}
 } birthday!`;
-			const placeholderJSON = `{
+      const placeholderJSON = `{
 	"en-us": {
 		"label1": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 	}
 }`;
-			const placeholderAngular = `{
+      const placeholderAngular = `{
 	"label1": "It's my cat's {year, selectordinal, one {#st} two {#nd} few {#rd} other {#th}} birthday!"
 }`;
-			inputElement.placeholder = jsonMode? angularFormat? placeholderAngular : placeholderJSON : placeholder;
-			outputElement.value = toPseudoText(inputElement.placeholder);
-		}
+      inputElement.placeholder = jsonMode ? angularFormat ? placeholderAngular : placeholderJSON : placeholder;
+      outputElement.value = toPseudoText(inputElement.placeholder);
+    }
 
-		inputElement.addEventListener('keyup', transform);
-		loadSettings();
-		updatePlaceholder();
-	</script>
+    inputElement.addEventListener('keyup', transform);
+    loadSettings();
+    updatePlaceholder();
+  </script>
 </body>
 
 </html>

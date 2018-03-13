@@ -18,9 +18,13 @@ Application Localizer package that helps with localizing applications
 
 ## Features
 
-* Locale validator - Check for missing labels - Multi-file locale support (see [example](#multi-file-locale-example) below)
-  _ Polymer file structure
-  _ Angular flat file structure
+* Locale validator
+
+  * Check for missing labels
+  * Multi-file locale support (see [example](#multi-file-locale-example) below)
+  * Polymer file structure
+  * Angular flat file structure
+
 * Pseudo locale generator (char mapping is taken from [pseudolocalization-tool](https://code.google.com/archive/p/pseudolocalization-tool/))
   * Accents on letters
   * Longer sentence
